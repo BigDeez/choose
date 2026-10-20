@@ -14,7 +14,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <!-- ===================================================================
-       1. STYLESHEET (CSS)
+       1. STYLESHEET (CSS) - Customize colors, panels, and layout here
   ==================================================================== -->
   <style>
     :root {
@@ -168,7 +168,7 @@
     .instruction-text {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       color: var(--accent-gold);
       margin-bottom: 0.8rem;
     }
@@ -202,6 +202,44 @@
       box-shadow: 0 10px 25px rgba(255, 42, 109, 0.3);
     }
     .btn-rose:hover { box-shadow: 0 15px 30px rgba(255, 42, 109, 0.5); }
+
+    /* Box Selection Grids */
+    .box-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    .box-choice-btn {
+      background: #190f1d;
+      border: 2px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 0.6rem 0.2rem;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.7rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .box-choice-btn:hover:not(:disabled) {
+      border-color: var(--accent-gold);
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px rgba(243, 198, 83, 0.4);
+    }
+
+    .box-choice-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+      border-color: #190f1d;
+    }
 
     /* Modal Windows & Reveals */
     .overlay {
@@ -333,7 +371,7 @@
   <!-- Start Screen Modal -->
   <div class="start-screen" id="startScreen">
     <h2>The Vault</h2>
-    <p>5 Dice Rolls. 5 Mystery Boxes. Click directly on the 3D colored boxes on screen to place your rolls!</p>
+    <p>5 Dice Rolls. 5 Mystery Boxes. Choose your unboxing order.</p>
     <button class="btn" id="initGameBtn">Initiate Session 🔥</button>
   </div>
 
@@ -347,19 +385,20 @@
     <div class="control-panel" id="controlPanel">
       <div class="instruction-text" id="instructionText">Roll 1 of 5</div>
       
-      <!-- Action 1: Roll Crystal Orb -->
+      <!-- Action 1: Roll Dice -->
       <div id="rollActionArea">
-        <button class="btn" id="rollDiceBtn">Roll Bright Crystal Orb ✨</button>
+        <button class="btn" id="rollDiceBtn">Roll Stylish Die 🎲</button>
       </div>
 
-      <!-- Action 2: Placement Instruction -->
+      <!-- Action 2: Choose Mystery Box (Click 3D boxes or buttons) -->
       <div id="placeActionArea" style="display: none; width: 100%;">
-        <div style="font-size: 0.9rem; color: #9a849f; margin-bottom: 0.4rem;">
-          Rolled Value: <span id="currentRollVal" style="color:var(--accent-gold); font-size:1.5rem; font-weight:800;">?</span>
+        <div style="font-size: 0.9rem; color: #9a849f; margin-bottom: 0.3rem;">
+          Rolled: <span id="currentRollVal" style="color:var(--accent-gold); font-size:1.4rem; font-weight:800;">?</span>
         </div>
-        <div style="font-size: 0.95rem; font-weight: 800; color:var(--accent-gold); animation: pulse 1.5s infinite;">
-          👉 Click directly on any 3D box on the screen to place this roll!
+        <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color:#fff;">
+          👆 Tap a coloured 3D box on screen or below:
         </div>
+        <div class="box-choice-grid" id="boxChoiceGrid"></div>
       </div>
 
       <!-- Action 3: Unseal Vault -->
@@ -369,9 +408,10 @@
 
       <!-- Action 4: Unbox Explode Order -->
       <div id="interactiveUnboxArea" style="display: none; width: 100%;">
-        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color:var(--accent-gold);">
-          Click any 3D box on screen to explode it next! 💥
+        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color:var(--accent-gold);">
+          👆 Tap a box to explode next:
         </div>
+        <div class="box-choice-grid" id="unboxChoiceGrid"></div>
       </div>
     </div>
   </div>
@@ -410,6 +450,7 @@
   <script>
     /* ==================================================================
        SECTION 3A: CELEBRITY & GAME DATABASE POOLS
+       TIP: You can add/remove items here easily!
     =================================================================== */
     const celebrityDatabase = {
       "TV Presenters & Personalities": [
@@ -518,14 +559,14 @@
     const sfx = new SoundFX();
 
     /* ==================================================================
-       SECTION 3C: THREE.JS 3D SCENE & LIGHTING
+       SECTION 3C: THREE.JS 3D SCENE & LIGHTING (RESPONSIVE FOR MOBILE)
     =================================================================== */
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x07040a, 0.03);
 
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 4, 11);
+    camera.position.set(0, 3.5, 12);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -536,15 +577,15 @@
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0xf3c653, 3, 30);
+    const pointLight1 = new THREE.PointLight(0xf3c653, 3.0, 30);
     pointLight1.position.set(0, 6, 4);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0xff2a6d, 3, 30);
+    const pointLight2 = new THREE.PointLight(0xff2a6d, 3.0, 35);
     pointLight2.position.set(-6, -2, -2);
     scene.add(pointLight2);
 
-    /* Build 3D Mystery Boxes */
+    /* Build 3D Mystery Boxes with Responsive Spacing for Mobile */
     const boxConfigs = [
       { name: "Velvet", color: 0xff2a6d },
       { name: "Gold", color: 0xf3c653 },
@@ -554,11 +595,22 @@
     ];
 
     const boxMeshes = [];
-    const boxSpacing = 2.4;
-    const startX = -((boxConfigs.length - 1) * boxSpacing) / 2;
+    
+    function updateResponsiveLayout() {
+      const isMobile = window.innerWidth < 768;
+      const boxSpacing = isMobile ? 1.45 : 2.4;
+      const startX = -((boxConfigs.length - 1) * boxSpacing) / 2;
+
+      boxMeshes.forEach((mesh, idx) => {
+        mesh.position.x = startX + idx * boxSpacing;
+        mesh.scale.setScalar(isMobile ? 0.75 : 1.0);
+      });
+
+      camera.position.z = isMobile ? 14 : 12;
+    }
 
     boxConfigs.forEach((cfg, idx) => {
-      const geometry = new THREE.BoxGeometry(1.6, 1.8, 1.6);
+      const geometry = new THREE.BoxGeometry(1.5, 1.7, 1.5);
       const material = new THREE.MeshStandardMaterial({
         color: cfg.color,
         roughness: 0.2,
@@ -567,95 +619,82 @@
         emissiveIntensity: 0.25
       });
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(startX + idx * boxSpacing, -0.6, 0);
       mesh.userData = { id: idx, name: cfg.name, assignedValue: null, originalColor: cfg.color, opened: false };
       scene.add(mesh);
       boxMeshes.push(mesh);
     });
 
+    updateResponsiveLayout();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      updateResponsiveLayout();
+    });
+
     /* ==================================================================
-       SECTION 3D: BRIGHT CRYSTAL ORB DICE WITH MATCHING NUMBER TEXTURE
+       SECTION 3D: STYLISH BRIGHT DICE & EXACT FACE MATCHING
     =================================================================== */
     const diceGroup = new THREE.Group();
-    diceGroup.position.set(0, 2.5, 2);
+    diceGroup.position.set(0, 2.3, 2);
 
-    // Canvas Texture Generator for Bright Orb Number
-    function createBrightOrbNumberTexture(numberText) {
+    // Canvas Texture Generator for Die Faces (1 to 6)
+    function createDieFaceTexture(numberText) {
       const canvas = document.createElement('canvas');
       canvas.width = 512; 
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
 
-      // Vibrant Glowing Background Circle
-      ctx.fillStyle = '#ff2a6d';
+      // Bright Luxury Obsidian Face Background
+      ctx.fillStyle = '#1c0e24';
       ctx.fillRect(0, 0, 512, 512);
 
-      // Inner Luminous Gold Starburst Frame
-      ctx.fillStyle = '#120818';
-      ctx.beginPath();
-      ctx.arc(256, 256, 210, 0, Math.PI * 2);
-      ctx.fill();
-
+      // Bright Gold Frame
       ctx.lineWidth = 16;
       ctx.strokeStyle = '#f3c653';
-      ctx.stroke();
+      ctx.strokeRect(20, 20, 472, 472);
 
-      // Bright Crisp Number
+      // Glowing Embossed Number
       ctx.shadowColor = '#f3c653';
-      ctx.shadowBlur = 35;
+      ctx.shadowBlur = 30;
       ctx.fillStyle = '#ffffff';
-      ctx.font = '900 280px Outfit, sans-serif';
+      ctx.font = '900 260px Outfit, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(numberText.toString(), 256, 265);
+      ctx.fillText(numberText.toString(), 256, 260);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.needsUpdate = true;
       return texture;
     }
 
-    // Pre-create textures for numbers 1 to 6
-    let orbNumberMaterials = {};
+    // Material setup for 6 cube faces
+    let dieMaterials = [];
     for (let i = 1; i <= 6; i++) {
-      orbNumberMaterials[i] = new THREE.MeshStandardMaterial({
-        map: createBrightOrbNumberTexture(i),
-        emissive: 0xf3c653,
-        emissiveIntensity: 0.6,
+      dieMaterials.push(new THREE.MeshStandardMaterial({
+        map: createDieFaceTexture(i),
         roughness: 0.1,
-        metalness: 0.5
-      });
+        metalness: 0.9,
+        emissive: 0xf3c653,
+        emissiveIntensity: 0.2
+      }));
     }
 
-    // Inner Core Sphere showing the matching number
-    const coreGeo = new THREE.SphereGeometry(0.8, 32, 32);
-    const coreMesh = new THREE.Mesh(coreGeo, orbNumberMaterials[1]);
-    diceGroup.add(coreMesh);
-
-    // Bright Translucent Glass Outer Shell
-    const shellGeo = new THREE.SphereGeometry(1.05, 32, 32);
-    const shellMat = new THREE.MeshPhysicalMaterial({
-      color: 0xf3c653,
-      emissive: 0xff2a6d,
-      emissiveIntensity: 0.3,
-      roughness: 0.05,
-      metalness: 0.1,
-      transmission: 0.75,
-      opacity: 0.95,
-      transparent: true,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1
-    });
-    const shellMesh = new THREE.Mesh(shellGeo, shellMat);
-    diceGroup.add(shellMesh);
-
-    // Orbiting Golden Neon Ring
-    const ringGeo = new THREE.TorusGeometry(1.35, 0.04, 16, 100);
-    const ringMat = new THREE.MeshStandardMaterial({ color: 0xf3c653, emissive: 0xf3c653, emissiveIntensity: 2.0 });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = Math.PI / 3;
-    diceGroup.add(ring);
-
+    const dieGeo = new THREE.BoxGeometry(1.4, 1.4, 1.4, 4, 4, 4);
+    const dieMesh = new THREE.Mesh(dieGeo, dieMaterials);
+    diceGroup.add(dieMesh);
     scene.add(diceGroup);
+
+    // Face rotation map so rolled number matches front view precisely
+    const faceRotations = {
+      1: { x: 0, y: 0 },
+      2: { x: 0, y: Math.PI / 2 },
+      3: { x: 0, y: Math.PI },
+      4: { x: 0, y: -Math.PI / 2 },
+      5: { x: -Math.PI / 2, y: 0 },
+      6: { x: Math.PI / 2, y: 0 }
+    };
 
     /* Particle Explosion Engine */
     let shards = [];
@@ -682,7 +721,7 @@
     }
 
     /* ==================================================================
-       SECTION 3E: GAME STATE & 3D INTERACTION (RAYCASTING)
+       SECTION 3E: GAME STATE, INTERACTION & CONTROLLER LOGIC
     =================================================================== */
     let currentRollValue = null;
     let placedCount = 0;
@@ -691,7 +730,8 @@
     let boxOutcomes = {};
     let isCelebSession = false;
     let finalCelebPick = null;
-    let gamePhase = 'ROLL'; // 'ROLL', 'PLACE', 'READY_UNSEAL', 'UNBOX'
+    let isPlacingMode = false;
+    let isUnboxingMode = false;
 
     const instructionText = document.getElementById('instructionText');
     const rollActionArea = document.getElementById('rollActionArea');
@@ -699,16 +739,18 @@
     const unsealActionArea = document.getElementById('unsealActionArea');
     const interactiveUnboxArea = document.getElementById('interactiveUnboxArea');
     const currentRollValEl = document.getElementById('currentRollVal');
+    const boxChoiceGrid = document.getElementById('boxChoiceGrid');
+    const unboxChoiceGrid = document.getElementById('unboxChoiceGrid');
 
     document.getElementById('initGameBtn').addEventListener('click', () => {
       document.getElementById('startScreen').style.display = 'none';
       instructionText.innerText = "Roll 1 of 5";
     });
 
-    // Roll Crystal Orb Logic & Animation Ticker
+    // Roll Stylish Die Logic
     document.getElementById('rollDiceBtn').addEventListener('click', () => {
       document.getElementById('rollDiceBtn').disabled = true;
-      instructionText.innerText = "Rolling Crystal Orb...";
+      instructionText.innerText = "Rolling Die...";
 
       let counter = 0;
       const rollInterval = setInterval(() => {
@@ -716,95 +758,96 @@
         currentRollValue = Math.floor(Math.random() * 6) + 1;
         currentRollValEl.innerText = currentRollValue;
 
-        // Instantly update the orb number texture to match current random frame
-        coreMesh.material = orbNumberMaterials[currentRollValue];
-
-        diceGroup.rotation.x += 0.7;
-        diceGroup.rotation.y += 0.9;
-        ring.rotation.z += 0.4;
-        diceGroup.position.y = 2.5 + Math.sin(counter) * 0.45;
+        dieMesh.rotation.x += 0.8;
+        dieMesh.rotation.y += 1.0;
+        diceGroup.position.y = 2.3 + Math.sin(counter) * 0.4;
 
         counter++;
 
         if (counter > 15) {
           clearInterval(rollInterval);
-          diceGroup.position.y = 2.5;
+          diceGroup.position.y = 2.3;
+          
+          // Snap to exact matching face rotation
+          const targetRot = faceRotations[currentRollValue];
+          dieMesh.rotation.set(targetRot.x, targetRot.y, 0);
 
-          // Set final matched number texture securely
-          coreMesh.material = orbNumberMaterials[currentRollValue];
-
-          instructionText.innerText = `Rolled ${currentRollValue}! Click a box on screen.`;
+          instructionText.innerText = `Rolled ${currentRollValue}! Tap a box to assign:`;
           rollActionArea.style.display = 'none';
           placeActionArea.style.display = 'block';
-          gamePhase = 'PLACE';
+          isPlacingMode = true;
+          isUnboxingMode = false;
+          renderBoxChoiceButtons();
         }
-      }, 60);
+      }, 55);
     });
 
-    // Raycaster for clicking directly on 3D Boxes in the Scene!
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    window.addEventListener('click', (event) => {
-      // Ignore clicks if clicking HUD buttons
-      if (event.target.closest('.control-panel') || event.target.closest('.overlay') || event.target.closest('.start-screen')) {
-        return;
-      }
-
-      if (gamePhase === 'PLACE') {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(boxMeshes);
-
-        if (intersects.length > 0) {
-          const clickedMesh = intersects[0].object;
-          const boxIdx = clickedMesh.userData.id;
-          if (clickedMesh.userData.assignedValue === null) {
-            assignRollToBox(boxIdx);
-          }
-        }
-      } else if (gamePhase === 'UNBOX') {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(boxMeshes);
-
-        if (intersects.length > 0) {
-          const clickedMesh = intersects[0].object;
-          const boxIdx = clickedMesh.userData.id;
-          if (!clickedMesh.userData.opened) {
-            triggerBoxUnbox(boxIdx);
-          }
-        }
-      }
-    });
+    function renderBoxChoiceButtons() {
+      boxChoiceGrid.innerHTML = '';
+      boxMeshes.forEach((mesh, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'box-choice-btn';
+        const isFilled = mesh.userData.assignedValue !== null;
+        btn.disabled = isFilled;
+        btn.innerHTML = `<span>${mesh.userData.name}</span><span style="color:var(--accent-gold);">${isFilled ? '✓' : 'Pick'}</span>`;
+        btn.onclick = () => assignRollToBox(idx);
+        boxChoiceGrid.appendChild(btn);
+      });
+    }
 
     function assignRollToBox(boxIdx) {
+      if (boxMeshes[boxIdx].userData.assignedValue !== null) return;
+      
       boxMeshes[boxIdx].userData.assignedValue = currentRollValue;
       placedCount++;
 
       boxMeshes[boxIdx].material.emissiveIntensity = 0.8;
       placeActionArea.style.display = 'none';
+      isPlacingMode = false;
 
       if (placedCount < 5) {
         instructionText.innerText = `Roll ${placedCount + 1} of 5`;
         rollActionArea.style.display = 'block';
         document.getElementById('rollDiceBtn').disabled = false;
-        gamePhase = 'ROLL';
       } else {
         instructionText.innerText = "All Boxes Loaded! Ready to Unseal.";
         unsealActionArea.style.display = 'block';
-        gamePhase = 'READY_UNSEAL';
       }
     }
+
+    // Raycasting for direct 3D Box Clicks on screen
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    window.addEventListener('click', (event) => {
+      // Ignore clicks if clicking HUD buttons or modals
+      if (event.target.closest('.control-panel') || event.target.closest('.overlay') || event.target.closest('.start-screen')) {
+        return;
+      }
+
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(boxMeshes);
+
+      if (intersects.length > 0) {
+        const clickedMesh = intersects[0].object;
+        if (isPlacingMode && clickedMesh.userData.assignedValue === null) {
+          assignRollToBox(clickedMesh.userData.id);
+        } else if (isUnboxingMode && !clickedMesh.userData.opened) {
+          triggerBoxUnbox(clickedMesh.userData.id);
+        }
+      }
+    });
 
     document.getElementById('unsealVaultBtn').addEventListener('click', () => {
       prepareOutcomes();
       unsealActionArea.style.display = 'none';
-      instructionText.innerText = "Click any 3D box on screen to explode it!";
+      instructionText.innerText = "Tap a box to explode!";
       interactiveUnboxArea.style.display = 'block';
-      gamePhase = 'UNBOX';
+      isPlacingMode = false;
+      isUnboxingMode = true;
+      renderUnboxChoiceButtons();
     });
 
     function prepareOutcomes() {
@@ -856,8 +899,22 @@
       });
     }
 
+    function renderUnboxChoiceButtons() {
+      unboxChoiceGrid.innerHTML = '';
+      boxMeshes.forEach((mesh, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'box-choice-btn';
+        btn.disabled = mesh.userData.opened;
+        btn.innerHTML = `<span>${mesh.name}</span><span style="color:var(--accent-gold);">${mesh.userData.opened ? 'Done' : 'Explode'}</span>`;
+        btn.onclick = () => triggerBoxUnbox(idx);
+        unboxChoiceGrid.appendChild(btn);
+      });
+    }
+
     let activeBoxIndex = null;
     function triggerBoxUnbox(boxIdx) {
+      if (boxMeshes[boxIdx].userData.opened) return;
+
       activeBoxIndex = boxIdx;
       boxMeshes[boxIdx].userData.opened = true;
       openedCount++;
@@ -888,8 +945,10 @@
       const nextBtn = document.getElementById('modalNextBtn');
       if (openedCount < 5) {
         document.getElementById('blueprintBox').style.display = 'none';
-        nextBtn.innerText = "Click Next Box on Screen ➔";
+        nextBtn.innerText = "Choose Next Box ➔";
+        renderUnboxChoiceButtons();
       } else {
+        isUnboxingMode = false;
         const bpRows = document.getElementById('blueprintRows');
         bpRows.innerHTML = '';
         masterBlueprint.forEach((d, i) => {
@@ -899,10 +958,8 @@
 
         if (isCelebSession) {
           celebGenBox.style.display = 'block';
-          nextBtn.innerText = "Start New Session ↺";
-        } else {
-          nextBtn.innerText = "Start New Session ↺";
         }
+        nextBtn.innerText = "Start New Session ↺";
       }
 
       document.getElementById('revealOverlay').classList.add('show');
@@ -951,7 +1008,7 @@
         location.reload();
       } else {
         interactiveUnboxArea.style.display = 'block';
-        gamePhase = 'UNBOX';
+        renderUnboxChoiceButtons();
       }
     });
 
@@ -1011,11 +1068,9 @@
         }
       });
 
-      // Floating & rotating crystal orb
-      diceGroup.position.y = 2.5 + Math.sin(time * 2) * 0.18;
-      diceGroup.rotation.y += 0.012;
-      ring.rotation.x += 0.02;
-      ring.rotation.y += 0.015;
+      // Gentle floating animation for stylish die
+      diceGroup.position.y = 2.3 + Math.sin(time * 2) * 0.15;
+      diceGroup.rotation.y += 0.008;
 
       // Exploding shard physics animation
       shards.forEach((s, idx) => {
