@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Night Engine</title>
+  <title>The Night Engine - Coaster Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;800;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #090306;
-      --panel: #14080e;
-      --panel-border: #381223;
-      --text: #fde8f0;
-      --accent-gold: #ffb703;
-      --accent-rose: #ff2a6d;
-      --accent-crimson: #d90429;
-      --accent-purple: #7209b7;
+      --bg: #0b0d14;
+      --panel: #161a26;
+      --panel-border: #2e354f;
+      --text: #ffffff;
+      --accent-gold: #ffbe0b;
+      --accent-pink: #ff007f;
+      --accent-purple: #8338ec;
+      --accent-blue: #3a86ef;
       --font-main: 'Outfit', -apple-system, sans-serif;
-      --font-sexy: 'Playfair Display', Georgia, serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,8 +25,8 @@
     body {
       background-color: var(--bg);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(217, 4, 41, 0.22) 0%, transparent 60%),
-        radial-gradient(circle at 50% 100%, rgba(114, 9, 183, 0.18) 0%, transparent 60%);
+        radial-gradient(circle at 50% 0%, rgba(131, 56, 236, 0.25) 0%, transparent 60%),
+        radial-gradient(circle at 50% 100%, rgba(255, 0, 127, 0.2) 0%, transparent 60%);
       color: var(--text);
       font-family: var(--font-main);
       min-height: 100vh;
@@ -42,20 +41,17 @@
     header { text-align: center; margin-bottom: 1.2rem; }
 
     h1 {
-      font-family: var(--font-sexy);
-      font-style: italic;
       font-size: 2.8rem;
       font-weight: 900;
       letter-spacing: 1px;
-      background: linear-gradient(135deg, #fff 10%, var(--accent-rose) 60%, var(--accent-gold) 100%);
+      background: linear-gradient(135deg, #fff 10%, var(--accent-pink) 60%, var(--accent-gold) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-transform: capitalize;
-      text-shadow: 0 0 30px rgba(255, 42, 109, 0.4);
+      text-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
     }
 
     .sub-heading {
-      color: #b88ba0;
+      color: #94a3b8;
       font-size: 0.95rem;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -72,28 +68,27 @@
     }
 
     .badge {
-      padding: 0.45rem 0.9rem;
+      padding: 0.5rem 1rem;
       border-radius: 999px;
       font-weight: 800;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       letter-spacing: 1px;
       background: var(--panel);
       border: 2px solid var(--panel-border);
-      color: #8c5d73;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      color: #64748b;
+      transition: all 0.3s ease;
     }
 
     .badge.active {
-      border-color: var(--accent-rose);
+      border-color: var(--accent-pink);
       color: #ffffff;
-      box-shadow: 0 0 20px rgba(255, 42, 109, 0.5), inset 0 0 10px rgba(255, 42, 109, 0.2);
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
       transform: scale(1.08);
     }
 
     .badge.completed {
       border-color: var(--accent-gold);
       color: var(--accent-gold);
-      box-shadow: 0 0 10px rgba(255, 183, 3, 0.2);
     }
 
     .main-container {
@@ -107,46 +102,42 @@
 
     .wheel-card {
       position: relative;
-      background: linear-gradient(180deg, #1c0a15 0%, var(--panel) 100%);
-      border: 1px solid rgba(255, 42, 109, 0.3);
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
       border-radius: 28px;
       padding: 1.8rem 1.2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.9),
-        0 0 30px rgba(217, 4, 41, 0.15),
-        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
     }
 
     .wheel-card h2 {
-      font-family: var(--font-sexy);
-      font-style: italic;
-      font-size: 1.6rem;
-      text-shadow: 0 0 12px rgba(255, 42, 109, 0.4);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--accent-pink);
+      text-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
     }
 
     .wheel-wrapper {
       position: relative;
-      width: 340px;
-      height: 340px;
+      width: 380px;
+      height: 380px;
       margin: 1.2rem 0;
     }
 
-    /* Right-side pointer styling */
     .pointer {
       position: absolute;
       top: 50%;
-      right: -22px;
+      right: -24px;
       transform: translateY(-50%);
       width: 0;
       height: 0;
-      border-top: 18px solid transparent;
-      border-bottom: 18px solid transparent;
-      border-right: 32px solid var(--accent-gold);
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
+      border-right: 36px solid var(--accent-gold);
       z-index: 10;
       filter: drop-shadow(0 0 12px var(--accent-gold));
       transition: transform 0.1s ease;
@@ -154,50 +145,48 @@
 
     .pointer.bounce { transform: translateY(-50%) translateX(6px) scale(1.15); }
 
-    canvas {
+    canvas#wheelCanvas {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      box-shadow: 
-        0 0 40px rgba(0, 0, 0, 0.9),
-        0 0 20px rgba(255, 42, 109, 0.3);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
     }
 
     .controls { display: flex; gap: 1rem; width: 100%; justify-content: center; }
 
     .btn {
-      background: linear-gradient(135deg, var(--accent-crimson), var(--accent-rose));
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
       color: white;
       border: none;
       padding: 1rem 2.2rem;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 900;
       border-radius: 16px;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      box-shadow: 0 10px 30px rgba(217, 4, 41, 0.5);
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 30px rgba(255, 0, 127, 0.4);
+      transition: all 0.25s ease;
     }
 
     .btn:hover {
       transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 15px 35px rgba(255, 42, 109, 0.7);
+      box-shadow: 0 15px 35px rgba(255, 0, 127, 0.6);
     }
     .btn:active { transform: translateY(1px) scale(0.98); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
     .btn-secondary {
       background: transparent;
-      border: 1px solid var(--panel-border);
-      color: #b88ba0;
+      border: 2px solid var(--panel-border);
+      color: #94a3b8;
       box-shadow: none;
     }
     .btn-secondary:hover { background: var(--panel-border); color: #fff; box-shadow: none; }
 
     .editor-section {
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
       background: var(--panel);
       border: 1px solid var(--panel-border);
       border-radius: 20px;
@@ -207,7 +196,7 @@
     .editor-section h3 {
       font-size: 0.85rem;
       margin-bottom: 0.6rem;
-      color: #b88ba0;
+      color: #94a3b8;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -219,7 +208,7 @@
 
     input[type="text"] {
       flex: 1;
-      background: #090306;
+      background: #0b0d14;
       border: 1px solid var(--panel-border);
       padding: 0.6rem 0.9rem;
       border-radius: 10px;
@@ -227,7 +216,7 @@
       font-family: inherit;
       font-size: 0.95rem;
     }
-    input[type="text"]:focus { outline: none; border-color: var(--accent-rose); }
+    input[type="text"]:focus { outline: none; border-color: var(--accent-pink); }
 
     .tags-container {
       display: flex;
@@ -238,23 +227,23 @@
     }
 
     .tag {
-      background: #240d1a;
-      border: 1px solid #4a1835;
+      background: #242b3d;
       padding: 0.3rem 0.7rem;
       border-radius: 8px;
       font-size: 0.85rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: #fde8f0;
+      color: #ffffff;
     }
 
-    .tag-remove { cursor: pointer; color: var(--accent-rose); font-weight: bold; }
+    .tag-remove { cursor: pointer; color: var(--accent-pink); font-weight: bold; }
 
+    /* Overlay Result Modal */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(9, 3, 6, 0.9);
+      background: rgba(11, 13, 20, 0.92);
       backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
@@ -268,43 +257,76 @@
     .overlay.show { opacity: 1; pointer-events: auto; }
 
     .result-card {
-      background: linear-gradient(180deg, #240b1b 0%, var(--panel) 100%);
+      background: var(--panel);
       border: 2px solid var(--accent-gold);
       padding: 2.5rem 1.8rem;
       border-radius: 28px;
       text-align: center;
-      max-width: 480px;
+      max-width: 500px;
       width: 90%;
       transform: scale(0.8);
       transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 0 60px rgba(255, 183, 3, 0.3);
+      box-shadow: 0 0 60px rgba(255, 190, 11, 0.3);
     }
 
     .overlay.show .result-card { transform: scale(1); }
     .result-title { font-size: 1rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
     
     .result-main {
-      font-family: var(--font-sexy);
-      font-style: italic;
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       font-weight: 900;
       color: #fff;
       margin: 1rem 0;
       line-height: 1.2;
-      text-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
+      text-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
     }
 
     .result-sequence-list {
       margin-top: 1.2rem;
       text-align: left;
-      background: #090306;
+      background: #0b0d14;
       padding: 1.2rem;
       border-radius: 16px;
-      border: 1px dashed var(--accent-rose);
+      border: 1px dashed var(--accent-pink);
     }
 
-    .result-seq-item { font-size: 0.95rem; margin-bottom: 0.5rem; color: #dfb8cb; }
+    .result-seq-item { font-size: 1rem; margin-bottom: 0.5rem; color: #cbd5e1; }
     .result-seq-item span { color: var(--accent-gold); font-weight: 800; }
+
+    /* Coaster Animation Screen */
+    #coasterOverlay {
+      position: fixed;
+      inset: 0;
+      background: #0b0d14;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #coasterOverlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #coasterCanvas {
+      width: 100%;
+      max-width: 800px;
+      height: 300px;
+    }
+
+    .coaster-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--accent-gold);
+      margin-top: 1rem;
+      text-transform: uppercase;
+    }
 
     .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
     @keyframes shake {
@@ -323,7 +345,7 @@
 
   <header>
     <h1>Decision Engine</h1>
-    <p class="sub-heading">Custom Branching Wheel System</p>
+    <p class="sub-heading">Interactive Multi-Wheel Sequence</p>
   </header>
 
   <div class="stage-indicator">
@@ -336,10 +358,10 @@
 
   <main class="main-container">
     <div class="wheel-card" id="wheel-card">
-      <h2 id="stage-title" style="color: var(--accent-rose);">Stage 1: Category</h2>
+      <h2 id="stage-title">Stage 1: Category</h2>
       <div class="wheel-wrapper">
         <div class="pointer" id="pointer"></div>
-        <canvas id="wheelCanvas" width="600" height="600"></canvas>
+        <canvas id="wheelCanvas" width="700" height="700"></canvas>
       </div>
       <div class="controls">
         <button class="btn" id="spinBtn">SPIN WHEEL</button>
@@ -359,18 +381,25 @@
     </div>
   </main>
 
+  <!-- Result Modal -->
   <div class="overlay" id="resultOverlay">
     <div class="result-card">
       <div class="result-title" id="resTitle">Result Locked</div>
       <div class="result-main" id="resText">OPTION</div>
       <div class="result-sequence-list" id="resSequenceBox" style="display: none;">
-        <div style="font-size:0.8rem; color:var(--accent-gold); text-transform:uppercase; margin-bottom:0.6rem; font-weight:800; letter-spacing:1px;">Final Execution Blueprint</div>
+        <div style="font-size:0.85rem; color:var(--accent-gold); text-transform:uppercase; margin-bottom:0.6rem; font-weight:800; letter-spacing:1px;">Final Execution Plan</div>
         <div id="resSequenceContent"></div>
       </div>
       <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center;">
-        <button class="btn" id="nextStageBtn">Proceed →</button>
+        <button class="btn" id="nextStageBtn">Ride to Next Wheel →</button>
       </div>
     </div>
+  </div>
+
+  <!-- Coaster Transition Screen -->
+  <div id="coasterOverlay">
+    <canvas id="coasterCanvas" width="800" height="300"></canvas>
+    <div class="coaster-title" id="coasterText">Riding to Stage 2...</div>
   </div>
 
   <script>
@@ -383,9 +412,9 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(450, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(90, this.ctx.currentTime + 0.04);
-        gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(500, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.04);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -477,7 +506,7 @@
       act_celeb: {
         title: "Rule: Blindfold & Snap",
         badgeId: "badge-action",
-        defaultOpts: ["Blindfold Him + Wank Over Celeb (Pics for Humiliation / Self-Play)"],
+        defaultOpts: ["Blindfold Him + Wank Over Celeb"],
         opts: []
       },
       sub_item: {
@@ -507,8 +536,8 @@
           "Edge 3 times before release",
           "Ruined hands off",
           "Slow motion only",
-          "Denial trap. Stop for 30 seconds before continuing",
-          "Mrs takes control (stop/go/fast/slow etc)",
+          "Denial trap (30s pause)",
+          "Mrs takes control",
           "Cock and ball torture"
         ],
         opts: []
@@ -523,10 +552,10 @@
     let currentStepIndex = 0;
     let selections = {};
 
-    // Seductive Luxury Palette (Crimson, Deep Magenta, Rose, Velvet Purple, Gold)
+    // Vibrant Distinct Wheel Slice Colors
     const colors = [
-      '#d90429', '#7209b7', '#ff2a6d', '#800f2f', 
-      '#b5179e', '#a01a58', '#4a0e17', '#c77dff'
+      '#ff007f', '#8338ec', '#3a86ef', '#00f5d4', 
+      '#ffbe0b', '#fb5607', '#ff0054', '#70e000'
     ];
 
     const canvas = document.getElementById('wheelCanvas');
@@ -548,12 +577,12 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (numSlices === 0) {
-        ctx.fillStyle = '#14080e';
+        ctx.fillStyle = '#161a26';
         ctx.beginPath();
         ctx.arc(radius, radius, radius, 0, 2 * Math.PI);
         ctx.fill();
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 24px Outfit';
+        ctx.font = 'bold 28px Outfit';
         ctx.textAlign = 'center';
         ctx.fillText('Add Options Below', radius, radius);
         return;
@@ -565,12 +594,12 @@
 
         ctx.beginPath();
         ctx.moveTo(radius, radius);
-        ctx.arc(radius, radius, radius - 10, start, end);
+        ctx.arc(radius, radius, radius - 12, start, end);
         ctx.closePath();
         ctx.fillStyle = colors[idx % colors.length];
         ctx.fill();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = '#090306';
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#0b0d14';
         ctx.stroke();
 
         ctx.save();
@@ -579,26 +608,26 @@
         ctx.textAlign = 'right';
         ctx.fillStyle = '#ffffff';
 
-        // Dynamic text size calculation based on string length & slice count for bigger readability
-        let fontSize = 23;
-        if (numSlices > 8) fontSize = 20;
-        if (opt.length > 25) fontSize = 16;
-        else if (opt.length > 18) fontSize = 18;
+        // High readability font sizes
+        let fontSize = 28;
+        if (numSlices > 8) fontSize = 22;
+        if (opt.length > 25) fontSize = 18;
+        else if (opt.length > 18) fontSize = 22;
 
         ctx.font = `900 ${fontSize}px Outfit, sans-serif`;
         ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-        ctx.shadowBlur = 8;
-        ctx.fillText(opt, radius - 30, fontSize / 3.2);
+        ctx.shadowBlur = 10;
+        ctx.fillText(opt, radius - 35, fontSize / 3.2);
         ctx.restore();
       });
 
-      // Hub styling
+      // Central Hub
       ctx.beginPath();
-      ctx.arc(radius, radius, 42, 0, 2 * Math.PI);
-      ctx.fillStyle = '#090306';
+      ctx.arc(radius, radius, 48, 0, 2 * Math.PI);
+      ctx.fillStyle = '#0b0d14';
       ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = '#ffb703';
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#ffbe0b';
       ctx.stroke();
     }
 
@@ -618,7 +647,7 @@
       const extraRounds = 5 + Math.floor(Math.random() * 4);
       const randomSliceIndex = Math.floor(Math.random() * numSlices);
       
-      const pointerAngle = 0; // 3 o'clock position
+      const pointerAngle = 0; // 3 o'clock
       const targetSliceMid = randomSliceIndex * sliceAngle + sliceAngle / 2;
       const totalRotation = (extraRounds * 2 * Math.PI) + (pointerAngle - targetSliceMid) - (currentAngle % (2 * Math.PI));
 
@@ -665,7 +694,6 @@
       const key = getCurrentKey();
       selections[key] = resultText;
 
-      // DYNAMIC BRANCHING LOGIC
       if (key === 'category') {
         if (resultText.includes("Body Part")) {
           activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
@@ -701,7 +729,7 @@
 
       if (currentStepIndex < activeSequenceKeys.length - 1) {
         seqBox.style.display = 'none';
-        nextBtn.innerText = "Next Wheel →";
+        nextBtn.innerText = "Ride to Next Wheel →";
       } else {
         const seqContent = document.getElementById('resSequenceContent');
         let html = `<div class="result-seq-item">1. Category: <span>${selections['category']}</span></div>`;
@@ -718,6 +746,81 @@
       }
 
       overlay.classList.add('show');
+    }
+
+    // Coaster Transition Animation Engine
+    function startCoasterAnimation(callback) {
+      const coasterOverlay = document.getElementById('coasterOverlay');
+      const coasterCanvas = document.getElementById('coasterCanvas');
+      const cctx = coasterCanvas.getContext('2d');
+      const coasterText = document.getElementById('coasterText');
+
+      coasterText.innerText = `Riding to Stage ${currentStepIndex + 1}...`;
+      coasterOverlay.classList.add('active');
+
+      let startTime = performance.now();
+      const duration = 1800; // ms
+
+      function animateCoaster(now) {
+        const elapsed = now - startTime;
+        const p = Math.min(elapsed / duration, 1);
+
+        cctx.clearRect(0, 0, coasterCanvas.width, coasterCanvas.height);
+
+        // Draw Roller Coaster Track (Sine Wave)
+        cctx.beginPath();
+        cctx.lineWidth = 8;
+        cctx.strokeStyle = '#3a86ef';
+        for (let x = 0; x <= coasterCanvas.width; x += 10) {
+          let y = 150 + Math.sin(x * 0.015) * 60;
+          if (x === 0) cctx.moveTo(x, y);
+          else cctx.lineTo(x, y);
+        }
+        cctx.stroke();
+
+        // Cart Position Along Sine Wave
+        let cartX = p * coasterCanvas.width;
+        let cartY = 150 + Math.sin(cartX * 0.015) * 60;
+        let slope = Math.cos(cartX * 0.015) * 60 * 0.015;
+        let angle = Math.atan(slope);
+
+        // Draw Cartoon Cart
+        cctx.save();
+        cctx.translate(cartX, cartY);
+        cctx.rotate(angle);
+
+        // Cart Body
+        cctx.fillStyle = '#ff007f';
+        cctx.fillRect(-25, -20, 50, 25);
+
+        // Wheels
+        cctx.fillStyle = '#ffbe0b';
+        cctx.beginPath();
+        cctx.arc(-15, 8, 7, 0, 2 * Math.PI);
+        cctx.arc(15, 8, 7, 0, 2 * Math.PI);
+        cctx.fill();
+
+        // Stick Figure Passenger
+        cctx.strokeStyle = '#ffffff';
+        cctx.lineWidth = 3;
+        cctx.beginPath();
+        cctx.arc(0, -32, 6, 0, 2 * Math.PI); // Head
+        cctx.moveTo(0, -26); cctx.lineTo(0, -15); // Spine
+        cctx.moveTo(0, -20); cctx.lineTo(-12, -30); // Raised arm
+        cctx.moveTo(0, -20); cctx.lineTo(12, -30);  // Raised arm
+        cctx.stroke();
+
+        cctx.restore();
+
+        if (p < 1) {
+          requestAnimationFrame(animateCoaster);
+        } else {
+          coasterOverlay.classList.remove('active');
+          callback();
+        }
+      }
+
+      requestAnimationFrame(animateCoaster);
     }
 
     function triggerScreenShake() {
@@ -817,14 +920,18 @@
 
     document.getElementById('nextStageBtn').addEventListener('click', () => {
       document.getElementById('resultOverlay').classList.remove('show');
+      
       if (currentStepIndex < activeSequenceKeys.length - 1) {
-        currentStepIndex++;
+        startCoasterAnimation(() => {
+          currentStepIndex++;
+          updateUI();
+        });
       } else {
         currentStepIndex = 0;
         activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
         selections = {};
+        updateUI();
       }
-      updateUI();
     });
 
     updateUI();
