@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nocturne — The 3D Vault Engine</title>
+  <title>The Vault — 3D Blind Dice Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
@@ -57,24 +57,14 @@
       font-weight: 800;
     }
 
-    #webgl-container {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-    }
+    #webgl-container { position: fixed; inset: 0; z-index: 1; }
+    #fx-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 95; }
 
-    #fx-canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 95;
-    }
-
-    /* Start / Welcome Overlay */
+    /* Welcome Screen */
     .start-screen {
       position: fixed;
       inset: 0;
-      background: rgba(5, 2, 8, 0.95);
+      background: rgba(5, 2, 8, 0.96);
       backdrop-filter: blur(15px);
       display: flex;
       flex-direction: column;
@@ -101,7 +91,7 @@
       line-height: 1.5;
     }
 
-    /* HUD Overlay Layer */
+    /* HUD Controls */
     .hud-layer {
       position: relative;
       z-index: 10;
@@ -127,7 +117,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.1);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
       text-align: center;
     }
 
@@ -151,7 +141,7 @@
       text-transform: uppercase;
       letter-spacing: 1.5px;
       box-shadow: 0 10px 25px rgba(243, 198, 83, 0.35);
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.25s ease;
     }
 
     .btn:hover {
@@ -161,7 +151,7 @@
     .btn:active { transform: translateY(1px) scale(0.98); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    /* Box Placement Grid */
+    /* Box Choice Buttons */
     .box-choice-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -199,7 +189,7 @@
       border-color: #22102e;
     }
 
-    /* Modal Screens */
+    /* Modals */
     .overlay {
       position: fixed;
       inset: 0;
@@ -247,33 +237,27 @@
       line-height: 1.2;
     }
 
-    .celeb-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-      margin-top: 0.8rem;
-      text-align: left;
-    }
-
     .celeb-card {
       background: #050208;
       border: 1px solid var(--panel-border);
-      padding: 0.6rem 0.8rem;
-      border-radius: 12px;
+      padding: 1rem;
+      border-radius: 14px;
+      text-align: center;
+      margin-top: 1rem;
     }
 
     .celeb-folder {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       color: var(--accent-gold);
       text-transform: uppercase;
       font-weight: 800;
     }
 
     .celeb-name {
-      font-size: 0.95rem;
-      font-weight: 800;
+      font-size: 1.5rem;
+      font-weight: 900;
       color: #fff;
-      margin-top: 0.2rem;
+      margin-top: 0.4rem;
     }
 
     .blueprint-box {
@@ -327,7 +311,7 @@
       <div class="instruction-text" id="instructionText">Roll 1 of 5</div>
       
       <div id="rollActionArea">
-        <button class="btn" id="rollDiceBtn">Roll 3D Dice 🎲</button>
+        <button class="btn" id="rollDiceBtn">Roll Ivory Dice 🎲</button>
       </div>
 
       <div id="placeActionArea" style="display: none; width: 100%;">
@@ -371,14 +355,12 @@
       "911": ["Athena (Angela Bassett)", "Grace (Sierra McClain)", "Maddie (Jennifer Love Hewitt)", "Marjan (Natacha Karam)", "Nancy (Brianna Baker)", "Tommy (Gina Torres)"]
     };
 
-    function getRandomCelebs(count = 6) {
-      const all = [];
-      Object.keys(celebrityDatabase).forEach(cat => {
-        celebrityDatabase[cat].forEach(name => {
-          all.push({ category: cat, name: name });
-        });
-      });
-      return all.sort(() => Math.random() - 0.5).slice(0, count);
+    function getRandomCeleb() {
+      const cats = Object.keys(celebrityDatabase);
+      const chosenCat = cats[Math.floor(Math.random() * cats.length)];
+      const names = celebrityDatabase[chosenCat];
+      const chosenName = names[Math.floor(Math.random() * names.length)];
+      return { category: chosenCat, name: chosenName };
     }
 
     const poolData = {
@@ -407,7 +389,6 @@
       ]
     };
 
-    // SOUND ENGINE
     class SoundFX {
       constructor() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -445,7 +426,7 @@
 
     const sfx = new SoundFX();
 
-    // THREE.JS 3D SCENE & DICE ANIMATION ENGINE
+    // THREE.JS SCENE SETUP
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x050208, 0.03);
@@ -459,7 +440,6 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
@@ -471,7 +451,7 @@
     pointLight2.position.set(-6, -2, -2);
     scene.add(pointLight2);
 
-    // 3D Mystery Boxes Setup
+    // 3D Box Configurations
     const boxConfigs = [
       { name: "Velvet", color: 0xff2a6d },
       { name: "Gold", color: 0xf3c653 },
@@ -495,32 +475,91 @@
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(startX + idx * boxSpacing, -0.6, 0);
-      mesh.userData = { id: idx, name: cfg.name, assignedValue: null };
+      mesh.userData = { id: idx, name: cfg.name, assignedValue: null, originalColor: cfg.color };
       scene.add(mesh);
       boxMeshes.push(mesh);
     });
 
-    // 3D Physical Dice Mesh
-    const diceGeo = new THREE.BoxGeometry(1.4, 1.4, 1.4);
-    const diceMat = new THREE.MeshStandardMaterial({
-      color: 0xf3c653,
-      roughness: 0.1,
-      metalness: 0.9,
-      emissive: 0xf3c653,
-      emissiveIntensity: 0.3
-    });
-    const diceMesh = new THREE.Mesh(diceGeo, diceMat);
+    // FUNCTION TO CREATE TEXTURED IVORY DIE FACES WITH DOTS
+    function createDiceFaceTexture(value) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+
+      // Ivory Background
+      ctx.fillStyle = '#f8f5e6';
+      ctx.fillRect(0, 0, 256, 256);
+
+      // Border
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = '#d4cbb3';
+      ctx.strokeRect(6, 6, 244, 244);
+
+      // Dots (Pips)
+      ctx.fillStyle = '#111111';
+      const drawDot = (x, y) => {
+        ctx.beginPath();
+        ctx.arc(x, y, 22, 0, Math.PI * 2);
+        ctx.fill();
+      };
+
+      const p = 64, c = 128, f = 192;
+      if (value === 1) { drawDot(c, c); }
+      else if (value === 2) { drawDot(p, p); drawDot(f, f); }
+      else if (value === 3) { drawDot(p, p); drawDot(c, c); drawDot(f, f); }
+      else if (value === 4) { drawDot(p, p); drawDot(f, p); drawDot(p, f); drawDot(f, f); }
+      else if (value === 5) { drawDot(p, p); drawDot(f, p); drawDot(c, c); drawDot(p, f); drawDot(f, f); }
+      else if (value === 6) { drawDot(p, p); drawDot(f, p); drawDot(p, c); drawDot(f, c); drawDot(p, f); drawDot(f, f); }
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    const diceMaterials = [
+      new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(1), roughness: 0.1, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(6), roughness: 0.1, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(2), roughness: 0.1, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(5), roughness: 0.1, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(3), roughness: 0.1, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(4), roughness: 0.1, metalness: 0.1 })
+    ];
+
+    const diceGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+    const diceMesh = new THREE.Mesh(diceGeo, diceMaterials);
     diceMesh.position.set(0, 2.5, 2);
     scene.add(diceMesh);
 
-    // Window Resizing
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+    const faceRotations = {
+      1: { x: 0, y: -Math.PI / 2 },
+      2: { x: -Math.PI / 2, y: 0 },
+      3: { x: 0, y: 0 },
+      4: { x: Math.PI, y: 0 },
+      5: { x: Math.PI / 2, y: 0 },
+      6: { x: 0, y: Math.PI / 2 }
+    };
 
-    // GAME STATE & FLOW
+    let shards = [];
+    function explodeBoxMesh(mesh) {
+      mesh.visible = false;
+      const count = 40;
+      const geom = new THREE.TetrahedronGeometry(0.2);
+      const mat = new THREE.MeshStandardMaterial({ color: mesh.userData.originalColor, roughness: 0.2, metalness: 0.8 });
+
+      for (let i = 0; i < count; i++) {
+        const shard = new THREE.Mesh(geom, mat);
+        shard.position.copy(mesh.position);
+        shard.userData = {
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: Math.random() * 0.3 + 0.1,
+          vz: (Math.random() - 0.5) * 0.3,
+          rotX: Math.random() * 0.2,
+          rotY: Math.random() * 0.2,
+          life: 1.0
+        };
+        scene.add(shard);
+        shards.push(shard);
+      }
+    }
+
     let currentRollValue = null;
     let placedCount = 0;
     let unboxIndex = 0;
@@ -538,10 +577,9 @@
       instructionText.innerText = "Roll 1 of 5";
     });
 
-    // 3D Dice Rolling Animation Mechanics
     document.getElementById('rollDiceBtn').addEventListener('click', () => {
       document.getElementById('rollDiceBtn').disabled = true;
-      instructionText.innerText = "Rolling 3D Physics Dice...";
+      instructionText.innerText = "Rolling Ivory Dice...";
 
       let counter = 0;
       const rollInterval = setInterval(() => {
@@ -549,16 +587,18 @@
         currentRollValue = Math.floor(Math.random() * 6) + 1;
         currentRollValEl.innerText = currentRollValue;
 
-        // Animate 3D Dice Tumble
-        diceMesh.rotation.x += 0.4;
-        diceMesh.rotation.y += 0.5;
-        diceMesh.position.y = 2.5 + Math.sin(counter) * 0.4;
+        diceMesh.rotation.x += 0.5;
+        diceMesh.rotation.y += 0.6;
+        diceMesh.position.y = 2.5 + Math.sin(counter) * 0.3;
 
         counter++;
 
         if (counter > 14) {
           clearInterval(rollInterval);
           diceMesh.position.y = 2.5;
+          const rot = faceRotations[currentRollValue];
+          diceMesh.rotation.set(rot.x, rot.y, 0);
+
           instructionText.innerText = "Roll locked! She chooses the box:";
           rollActionArea.style.display = 'none';
           placeActionArea.style.display = 'block';
@@ -584,9 +624,7 @@
       boxMeshes[boxIdx].userData.assignedValue = currentRollValue;
       placedCount++;
 
-      // Pulse selected box
       boxMeshes[boxIdx].material.emissiveIntensity = 0.8;
-
       placeActionArea.style.display = 'none';
 
       if (placedCount < 5) {
@@ -620,11 +658,11 @@
       else if (cat.includes("Item")) targetPool = poolData.sub_item;
 
       let targetText = "";
-      let celebList = [];
+      let celebPick = null;
 
       if (isCeleb) {
-        celebList = getRandomCelebs(6);
-        targetText = "6 Random Celeb Folders";
+        celebPick = getRandomCeleb();
+        targetText = `📂 ${celebPick.category} ➔ ${celebPick.name}`;
       } else {
         targetText = targetPool[(targetValDice - 1) % targetPool.length];
       }
@@ -640,7 +678,7 @@
 
       masterBlueprint = [
         { title: "Stage 1: Category", val: cat, isCeleb: false },
-        { title: "Stage 2: Target", val: targetText, isCeleb: isCeleb, celebs: celebList },
+        { title: "Stage 2: Target", val: targetText, isCeleb: isCeleb, celeb: celebPick },
         { title: "Stage 3: Action", val: actionText, isCeleb: false },
         { title: "Stage 4: Method", val: methodText, isCeleb: false },
         { title: "Stage 5: Over The Edge", val: climaxText, isCeleb: false }
@@ -656,6 +694,8 @@
       triggerParticles();
       triggerShake();
 
+      explodeBoxMesh(boxMeshes[unboxIndex]);
+
       const stageData = masterBlueprint[unboxIndex];
       const boxObj = boxMeshes[unboxIndex];
 
@@ -663,18 +703,13 @@
       const containerEl = document.getElementById('modalContentContainer');
 
       if (stageData.isCeleb) {
-        let html = `<div style="font-size:1.1rem; color:var(--accent-gold); font-weight:800; margin-bottom:0.5rem;">Pick 1 of 6 Random Celebs:</div>`;
-        html += `<div class="celeb-grid">`;
-        stageData.celebs.forEach((c, idx) => {
-          html += `
-            <div class="celeb-card">
-              <div class="celeb-folder">📂 ${c.category}</div>
-              <div class="celeb-name">${idx + 1}. ${c.name}</div>
-            </div>
-          `;
-        });
-        html += `</div>`;
-        containerEl.innerHTML = html;
+        containerEl.innerHTML = `
+          <div style="font-size:1.1rem; color:var(--accent-gold); font-weight:800; margin-bottom:0.3rem;">Secondary Celeb Dice Result:</div>
+          <div class="celeb-card">
+            <div class="celeb-folder">📂 ${stageData.celeb.category}</div>
+            <div class="celeb-name">${stageData.celeb.name}</div>
+          </div>
+        `;
       } else {
         containerEl.innerHTML = `<div class="modal-main-text">${stageData.val}</div>`;
       }
@@ -684,7 +719,6 @@
         document.getElementById('blueprintBox').style.display = 'none';
         nextBtn.innerText = `Explode Box ${unboxIndex + 2}: ${boxMeshes[unboxIndex + 1].userData.name} 💥`;
       } else {
-        // FULL 5TH BOX STAGE FINALLY SHOWS BLUEPRINT
         const bpRows = document.getElementById('blueprintRows');
         bpRows.innerHTML = '';
         masterBlueprint.forEach((d, i) => {
@@ -705,7 +739,6 @@
       }
     });
 
-    // Screen Shake & Explosive Particle Burst
     function triggerShake() {
       const card = document.getElementById('modalCard');
       card.classList.add('shake');
@@ -745,15 +778,31 @@
       if (particles.length > 0) requestAnimationFrame(updateParticles);
     }
 
-    // Floating 3D Render Loop
     let clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
 
       boxMeshes.forEach((mesh, i) => {
-        mesh.position.y = -0.6 + Math.sin(time * 1.5 + i) * 0.12;
-        mesh.rotation.y += 0.005;
+        if (mesh.visible) {
+          mesh.position.y = -0.6 + Math.sin(time * 1.5 + i) * 0.12;
+          mesh.rotation.y += 0.005;
+        }
+      });
+
+      shards.forEach((s, idx) => {
+        s.position.x += s.userData.vx;
+        s.position.y += s.userData.vy;
+        s.position.z += s.userData.vz;
+        s.userData.vy -= 0.015;
+        s.rotation.x += s.userData.rotX;
+        s.rotation.y += s.userData.rotY;
+        s.userData.life -= 0.02;
+        s.scale.setScalar(Math.max(s.userData.life, 0.001));
+        if (s.userData.life <= 0) {
+          scene.remove(s);
+          shards.splice(idx, 1);
+        }
       });
 
       renderer.render(scene, camera);
