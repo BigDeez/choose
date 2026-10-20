@@ -450,7 +450,6 @@
   <script>
     /* ==================================================================
        SECTION 3A: CELEBRITY & GAME DATABASE POOLS
-       TIP: You can add/remove items here easily!
     =================================================================== */
     const celebrityDatabase = {
       "TV Presenters & Personalities": [
@@ -494,16 +493,17 @@
     }
 
     const poolData = {
-      categories: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "condom", "Item / Prop"],
+      categories: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "Condom", "Item / Prop"],
       sub_her_body: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
       sub_clothing: ["Bra", "Knickers", "Skirt", "Shirt", "Hijab", "Dress", "Heels", "Jeans", "Gloves", "Stockings"],
       sub_myself: ["Stomach", "Balls", "Chest", "Hand", "Face", "Feet"],
-      sub_condom: ["now you can have your fun."],
-      sub_item: ["Table", "Kitchen Counter", "Mirror", "Sofa Cushion", "table", "glass", "Phone Screen", "shoes", "plate", "biscuit" ],
+      sub_condom: ["Now this is where you have your fun"],
+      sub_item: ["Table", "Kitchen Counter", "Mirror", "Sofa Cushion", "Table", "Glass", "Phone Screen", "Shoes", "Plate", "Biscuit"],
       
       act_standard: ["Leave on", "Clean off", "Play with it", "Take pictures", "Taste it", "Share it"],
       act_glasses_mouth: ["Take pictures", "Taste it", "Swallow", "Share it"],
       act_hands: ["Taste it", "Share it", "Play with it", "Use as lube", "Rub in face", "Put in ass"],
+      act_condom: ["Use as lube", "Turn inside out", "Empty into mouth", "Empty onto ass action"],
       act_celeb: ["Blindfold Him + Wank Over Celeb (Pics for Humiliation / Self-Play)"],
 
       methods: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy"],
@@ -560,7 +560,7 @@
     const sfx = new SoundFX();
 
     /* ==================================================================
-       SECTION 3C: THREE.JS 3D SCENE & LIGHTING (RESPONSIVE & SPACED OUT)
+       SECTION 3C: THREE.JS 3D SCENE & LIGHTING
     =================================================================== */
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
@@ -586,7 +586,6 @@
     pointLight2.position.set(-6, -2, -2);
     scene.add(pointLight2);
 
-    /* Build 3D Mystery Boxes with Responsive Spacing for Mobile */
     const boxConfigs = [
       { name: "Velvet", color: 0xff2a6d },
       { name: "Gold", color: 0xf3c653 },
@@ -849,12 +848,20 @@
       let actPool = poolData.act_standard;
       isCelebSession = false;
 
-      // Handle category selection mapping including the new condom subsection
-      if (cat.includes("Clothing")) targetPool = poolData.sub_clothing;
-      else if (cat.includes("Myself")) targetPool = poolData.sub_myself;
-      else if (cat.includes("Celebrity")) { isCelebSession = true; actPool = poolData.act_celeb; }
-      else if (cat.toLowerCase().includes("condom")) targetPool = poolData.sub_condom;
-      else if (cat.includes("Item")) targetPool = poolData.sub_item;
+      // Handle category selection mapping
+      if (cat.includes("Clothing")) {
+        targetPool = poolData.sub_clothing;
+      } else if (cat.includes("Myself")) {
+        targetPool = poolData.sub_myself;
+      } else if (cat.includes("Celebrity")) {
+        isCelebSession = true; 
+        actPool = poolData.act_celeb;
+      } else if (cat.toLowerCase().includes("condom")) {
+        targetPool = poolData.sub_condom;
+        actPool = poolData.act_condom; // Switches directly to your custom condom actions!
+      } else if (cat.includes("Item")) {
+        targetPool = poolData.sub_item;
+      }
 
       let targetText = "";
 
