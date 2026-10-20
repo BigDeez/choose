@@ -387,7 +387,7 @@
       
       <!-- Action 1: Roll Dice -->
       <div id="rollActionArea">
-        <button class="btn" id="rollDiceBtn">Roll Black &amp; Gold Die 🎲</button>
+        <button class="btn" id="rollDiceBtn">Roll Bright Gold Die 🎲</button>
       </div>
 
       <!-- Action 2: Choose Mystery Box (Click 3D boxes or buttons) -->
@@ -575,10 +575,10 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0xf3c653, 3.0, 35);
+    const pointLight1 = new THREE.PointLight(0xfffae6, 4.0, 40);
     pointLight1.position.set(0, 6, 4);
     scene.add(pointLight1);
 
@@ -632,28 +632,32 @@
     });
 
     /* ==================================================================
-       SECTION 3D: BLACK & GOLD STYLISH DIE
+       SECTION 3D: BRIGHT GOLD & BLACK STYLISH DIE
     =================================================================== */
     const diceGroup = new THREE.Group();
     diceGroup.position.set(0, 2.2, 2);
 
-    function createBlackGoldDieFaceTexture(numberText) {
+    // High-Contrast Bright Gold Textures for Die Faces (1 to 6)
+    function createBrightGoldDieFaceTexture(numberText) {
       const canvas = document.createElement('canvas');
       canvas.width = 512; 
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
 
-      ctx.fillStyle = '#08040d';
+      // Deep Black Obsidian Background
+      ctx.fillStyle = '#050208';
       ctx.fillRect(0, 0, 512, 512);
 
-      ctx.lineWidth = 18;
-      ctx.strokeStyle = '#f3c653';
-      ctx.strokeRect(22, 22, 468, 468);
+      // Super Bright Gold Border Outline
+      ctx.lineWidth = 20;
+      ctx.strokeStyle = '#ffe885';
+      ctx.strokeRect(20, 20, 472, 472);
 
-      ctx.shadowColor = '#f3c653';
-      ctx.shadowBlur = 25;
-      ctx.fillStyle = '#f3c653';
-      ctx.font = '900 260px Outfit, sans-serif';
+      // Intense Glowing Gold Number
+      ctx.shadowColor = '#ffe885';
+      ctx.shadowBlur = 35;
+      ctx.fillStyle = '#fff4b8';
+      ctx.font = '900 270px Outfit, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(numberText.toString(), 256, 260);
@@ -663,12 +667,15 @@
       return texture;
     }
 
+    // Material setup for 6 cube faces with enhanced brightness emission
     let dieMaterials = [];
     for (let i = 1; i <= 6; i++) {
       dieMaterials.push(new THREE.MeshStandardMaterial({
-        map: createBlackGoldDieFaceTexture(i),
-        roughness: 0.15,
-        metalness: 0.85
+        map: createBrightGoldDieFaceTexture(i),
+        roughness: 0.1,
+        metalness: 0.95,
+        emissive: 0xffe885,
+        emissiveIntensity: 0.35
       }));
     }
 
@@ -677,6 +684,7 @@
     diceGroup.add(dieMesh);
     scene.add(diceGroup);
 
+    // Exact face rotation map ensuring roll value matches camera view
     const faceRotations = {
       1: { x: 0, y: 0 },
       2: { x: 0, y: Math.PI / 2 },
@@ -756,6 +764,7 @@
           clearInterval(rollInterval);
           diceGroup.position.y = 2.2;
           
+          // Snap precisely to the exact face rotation matching the roll
           const targetRot = faceRotations[currentRollValue];
           dieMesh.rotation.set(targetRot.x, targetRot.y, 0);
 
@@ -848,7 +857,6 @@
       let actPool = poolData.act_standard;
       isCelebSession = false;
 
-      // Handle category selection mapping
       if (cat.includes("Clothing")) {
         targetPool = poolData.sub_clothing;
       } else if (cat.includes("Myself")) {
@@ -858,7 +866,7 @@
         actPool = poolData.act_celeb;
       } else if (cat.toLowerCase().includes("condom")) {
         targetPool = poolData.sub_condom;
-        actPool = poolData.act_condom; // Switches directly to your custom condom actions!
+        actPool = poolData.act_condom;
       } else if (cat.includes("Item")) {
         targetPool = poolData.sub_item;
       }
