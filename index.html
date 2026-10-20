@@ -108,7 +108,6 @@
       margin: 1rem 0;
     }
 
-    /* Right-side pointer styling */
     .pointer {
       position: absolute;
       top: 50%;
@@ -284,6 +283,7 @@
     <div id="badge-target" class="badge">2. TARGET</div>
     <div id="badge-action" class="badge">3. ACTION</div>
     <div id="badge-method" class="badge">4. METHOD</div>
+    <div id="badge-climax" class="badge">5. OVER THE EDGE</div>
   </div>
 
   <main class="main-container">
@@ -458,7 +458,15 @@
       method: {
         title: "Stage 4: Method / Technique",
         badgeId: "badge-method",
-        defaultOpts: ["Blowjob / Oral", "Handwork Only", "PIV (Intercourse)", "Body Glide / Friction", "Toy-Assisted", "Paired (Hands + Mouth)", "Slow Grind vs Speed Run"],
+        defaultOpts: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy Assisted"],
+        opts: []
+      },
+
+      // FINAL WHEEL: OVER THE EDGE CONTROL
+      climax: {
+        title: "Stage 5: Over The Edge",
+        badgeId: "badge-climax",
+        defaultOpts: ["Full Throttle", "Edged 3 Times First", "Wrong Method Finish", "Ruined / Hands-Off Finish", "Slow Motion Only", "Mrs Take Control", "Denial Trap (2 Min Pause)", "Blindfolded Blast"],
         opts: []
       }
     };
@@ -467,7 +475,7 @@
       masterData[k].opts = [...masterData[k].defaultOpts];
     });
 
-    let activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
+    let activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
     let currentStepIndex = 0;
     let selections = {};
 
@@ -604,26 +612,25 @@
       // DYNAMIC BRANCHING LOGIC
       if (key === 'category') {
         if (resultText.includes("Body Part")) {
-          activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
+          activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
         } else if (resultText.includes("Clothing")) {
-          activeSequenceKeys = ["category", "sub_clothing", "act_clothing", "method"];
+          activeSequenceKeys = ["category", "sub_clothing", "act_clothing", "method", "climax"];
         } else if (resultText.includes("Myself")) {
-          activeSequenceKeys = ["category", "sub_myself", "act_myself", "method"];
+          activeSequenceKeys = ["category", "sub_myself", "act_myself", "method", "climax"];
         } else if (resultText.includes("Celebrity")) {
-          activeSequenceKeys = ["category", "sub_celeb", "act_celeb", "method"];
+          activeSequenceKeys = ["category", "sub_celeb", "act_celeb", "method", "climax"];
         } else if (resultText.includes("Item")) {
-          activeSequenceKeys = ["category", "sub_item", "act_item", "method"];
+          activeSequenceKeys = ["category", "sub_item", "act_item", "method", "climax"];
         }
       } else if (key === 'sub_her_body') {
         if (resultText === "Hair") {
-          // Skip action wheel directly to method
-          activeSequenceKeys = ["category", "sub_her_body", "method"];
+          activeSequenceKeys = ["category", "sub_her_body", "method", "climax"];
         } else if (resultText === "Glasses" || resultText === "Mouth") {
-          activeSequenceKeys = ["category", "sub_her_body", "act_glasses_mouth", "method"];
+          activeSequenceKeys = ["category", "sub_her_body", "act_glasses_mouth", "method", "climax"];
         } else if (resultText === "Hands") {
-          activeSequenceKeys = ["category", "sub_her_body", "act_her_hands", "method"];
+          activeSequenceKeys = ["category", "sub_her_body", "act_her_hands", "method", "climax"];
         } else {
-          activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
+          activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
         }
       }
 
@@ -701,7 +708,7 @@
       document.getElementById('stage-title').innerText = data.title;
       document.getElementById('editor-title').innerText = `Edit ${data.title}`;
 
-      const badgeIds = ["badge-category", "badge-target", "badge-action", "badge-method"];
+      const badgeIds = ["badge-category", "badge-target", "badge-action", "badge-method", "badge-climax"];
       badgeIds.forEach((bId, idx) => {
         const badge = document.getElementById(bId);
         if (idx < currentStepIndex) badge.className = "badge completed";
@@ -758,7 +765,7 @@
         currentStepIndex++;
       } else {
         currentStepIndex = 0;
-        activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
+        activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
         selections = {};
       }
       updateUI();
