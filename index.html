@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nocturne — The 3D Intimate Vault</title>
+  <title>Nocturne — The 3D Vault Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
-  <!-- Load Three.js for 3D Graphics -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
@@ -41,7 +40,7 @@
     h1 {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       font-weight: 900;
       letter-spacing: 2px;
       background: linear-gradient(135deg, #fff 20%, var(--accent-gold) 80%);
@@ -64,12 +63,50 @@
       z-index: 1;
     }
 
-    /* Interactive HUD Overlay */
+    #fx-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 95;
+    }
+
+    /* Start / Welcome Overlay */
+    .start-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 2, 8, 0.95);
+      backdrop-filter: blur(15px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 150;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .start-screen h2 {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 3rem;
+      color: var(--accent-gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .start-screen p {
+      color: #a88ba8;
+      font-size: 1.1rem;
+      max-width: 450px;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    /* HUD Overlay Layer */
     .hud-layer {
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 700px;
+      max-width: 650px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -78,13 +115,11 @@
       pointer-events: none;
     }
 
-    .hud-layer > * {
-      pointer-events: auto;
-    }
+    .hud-layer > * { pointer-events: auto; }
 
     .control-panel {
-      background: rgba(13, 6, 18, 0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(13, 6, 18, 0.88);
+      backdrop-filter: blur(15px);
       border: 1px solid var(--panel-border);
       border-radius: 24px;
       padding: 1.5rem;
@@ -99,34 +134,34 @@
     .instruction-text {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       color: var(--accent-gold);
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .btn {
       background: linear-gradient(135deg, var(--accent-gold), #b38b25);
       color: #050208;
       border: none;
-      padding: 0.9rem 2.2rem;
-      font-size: 1.05rem;
+      padding: 1rem 2.5rem;
+      font-size: 1.1rem;
       font-weight: 900;
       border-radius: 14px;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      box-shadow: 0 10px 25px rgba(243, 198, 83, 0.3);
-      transition: all 0.25s ease;
+      box-shadow: 0 10px 25px rgba(243, 198, 83, 0.35);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .btn:hover {
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 15px 30px rgba(243, 198, 83, 0.5);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 15px 35px rgba(243, 198, 83, 0.55);
     }
     .btn:active { transform: translateY(1px) scale(0.98); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    /* Box Choice Grid for Her */
+    /* Box Placement Grid */
     .box-choice-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -149,13 +184,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.3px;
+      gap: 0.3rem;
     }
 
     .box-choice-btn:hover:not(:disabled) {
       border-color: var(--accent-gold);
       transform: translateY(-3px);
-      box-shadow: 0 0 15px rgba(243, 198, 83, 0.3);
+      box-shadow: 0 0 15px rgba(243, 198, 83, 0.4);
     }
 
     .box-choice-btn:disabled {
@@ -164,7 +199,7 @@
       border-color: #22102e;
     }
 
-    /* Cinematic Modal */
+    /* Modal Screens */
     .overlay {
       position: fixed;
       inset: 0;
@@ -205,7 +240,7 @@
     .modal-main-text {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       font-weight: 900;
       color: #fff;
       margin: 1rem 0;
@@ -251,7 +286,7 @@
     }
 
     .blueprint-row {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       margin-bottom: 0.5rem;
       color: #e2cce6;
     }
@@ -260,12 +295,27 @@
       color: var(--accent-gold);
       font-weight: 900;
     }
+
+    .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(3px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+      40%, 60% { transform: translate3d(5px, 0, 0); }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Three.js 3D Canvas Container -->
+  <canvas id="fx-canvas"></canvas>
   <div id="webgl-container"></div>
+
+  <!-- Start Screen Landing -->
+  <div class="start-screen" id="startScreen">
+    <h2>The Vault</h2>
+    <p>5 Dice Rolls. 5 Mystery Boxes. Total Unpredictability.</p>
+    <button class="btn" id="initGameBtn">Initiate Session 🔥</button>
+  </div>
 
   <header>
     <h1>Nocturne</h1>
@@ -274,34 +324,38 @@
 
   <div class="hud-layer">
     <div class="control-panel" id="controlPanel">
-      <div class="instruction-text" id="instructionText">Roll the 3D dice to generate your value</div>
+      <div class="instruction-text" id="instructionText">Roll 1 of 5</div>
       
       <div id="rollActionArea">
-        <button class="btn" id="rollDiceBtn">Roll Dice 🎲</button>
+        <button class="btn" id="rollDiceBtn">Roll 3D Dice 🎲</button>
       </div>
 
       <div id="placeActionArea" style="display: none; width: 100%;">
-        <div style="font-size: 0.9rem; color: #a88ba8; margin-bottom: 0.5rem;">Rolled Value: <span id="currentRollVal" style="color:var(--accent-gold); font-size:1.4rem; font-weight:900;">?</span></div>
-        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem;">She chooses which mystery box receives this roll:</div>
+        <div style="font-size: 0.95rem; color: #a88ba8; margin-bottom: 0.4rem;">Rolled Value: <span id="currentRollVal" style="color:var(--accent-gold); font-size:1.6rem; font-weight:900;">?</span></div>
+        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; color:#fff;">She chooses which mystery box receives this roll:</div>
         <div class="box-choice-grid" id="boxChoiceGrid"></div>
+      </div>
+
+      <div id="unsealActionArea" style="display: none;">
+        <button class="btn" id="unsealVaultBtn">UNSEAL THE VAULT 🔓</button>
       </div>
     </div>
   </div>
 
-  <!-- Cinematic Reveal Modal -->
+  <!-- Unboxing Ceremony Modal -->
   <div class="overlay" id="revealOverlay">
-    <div class="modal-card">
+    <div class="modal-card" id="modalCard">
       <div class="modal-title" id="modalTitle">Unboxing Box...</div>
       <div id="modalContentContainer">
         <div class="modal-main-text" id="modalMainText">...</div>
       </div>
 
       <div class="blueprint-box" id="blueprintBox" style="display: none;">
-        <div style="font-size: 0.8rem; color: var(--accent-gold); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; margin-bottom: 0.6rem;">Master Execution Blueprint</div>
+        <div style="font-size: 0.85rem; color: var(--accent-gold); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; margin-bottom: 0.6rem;">Master Execution Plan</div>
         <div id="blueprintRows"></div>
       </div>
 
-      <button class="btn" id="modalNextBtn" style="width: 100%; margin-top: 1.2rem;">Unseal Next Box 💥</button>
+      <button class="btn" id="modalNextBtn" style="width: 100%; margin-top: 1.2rem;">Explode Box 💥</button>
     </div>
   </div>
 
@@ -353,10 +407,48 @@
       ]
     };
 
-    // THREE.JS 3D ENVIRONMENT SETUP
+    // SOUND ENGINE
+    class SoundFX {
+      constructor() {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      playRoll() {
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      playExplode() {
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        [150, 300, 600, 900].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.04);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime + idx * 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.04 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.04);
+          osc.stop(this.ctx.currentTime + idx * 0.04 + 0.4);
+        });
+      }
+    }
+
+    const sfx = new SoundFX();
+
+    // THREE.JS 3D SCENE & DICE ANIMATION ENGINE
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x050208, 0.035);
+    scene.fog = new THREE.FogExp2(0x050208, 0.03);
 
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 4, 11);
@@ -368,24 +460,24 @@
     container.appendChild(renderer.domElement);
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0xf3c653, 2, 20);
-    pointLight1.position.set(0, 5, 2);
+    const pointLight1 = new THREE.PointLight(0xf3c653, 2.5, 25);
+    pointLight1.position.set(0, 6, 3);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0xff2a6d, 2, 25);
-    pointLight2.position.set(-5, -2, -2);
+    const pointLight2 = new THREE.PointLight(0xff2a6d, 2.5, 30);
+    pointLight2.position.set(-6, -2, -2);
     scene.add(pointLight2);
 
     // 3D Mystery Boxes Setup
     const boxConfigs = [
-      { name: "Velvet", color: 0xaa1133 },
-      { name: "Gold", color: 0xd4af37 },
-      { name: "Emerald", color: 0x118855 },
-      { name: "Midnight", color: 0x2244aa },
-      { name: "Amethyst", color: 0x7722aa }
+      { name: "Velvet", color: 0xff2a6d },
+      { name: "Gold", color: 0xf3c653 },
+      { name: "Emerald", color: 0x10b981 },
+      { name: "Midnight", color: 0x3b82f6 },
+      { name: "Amethyst", color: 0xa855f7 }
     ];
 
     const boxMeshes = [];
@@ -399,23 +491,36 @@
         roughness: 0.2,
         metalness: 0.8,
         emissive: cfg.color,
-        emissiveIntensity: 0.15
+        emissiveIntensity: 0.2
       });
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(startX + idx * boxSpacing, -0.5, 0);
-      mesh.userData = { id: idx, name: cfg.name, assignedValue: null, isOpen: false };
+      mesh.position.set(startX + idx * boxSpacing, -0.6, 0);
+      mesh.userData = { id: idx, name: cfg.name, assignedValue: null };
       scene.add(mesh);
       boxMeshes.push(mesh);
     });
 
-    // Handle window resizing
+    // 3D Physical Dice Mesh
+    const diceGeo = new THREE.BoxGeometry(1.4, 1.4, 1.4);
+    const diceMat = new THREE.MeshStandardMaterial({
+      color: 0xf3c653,
+      roughness: 0.1,
+      metalness: 0.9,
+      emissive: 0xf3c653,
+      emissiveIntensity: 0.3
+    });
+    const diceMesh = new THREE.Mesh(diceGeo, diceMat);
+    diceMesh.position.set(0, 2.5, 2);
+    scene.add(diceMesh);
+
+    // Window Resizing
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // GAME STATE LOGIC
+    // GAME STATE & FLOW
     let currentRollValue = null;
     let placedCount = 0;
     let unboxIndex = 0;
@@ -424,25 +529,37 @@
     const instructionText = document.getElementById('instructionText');
     const rollActionArea = document.getElementById('rollActionArea');
     const placeActionArea = document.getElementById('placeActionArea');
+    const unsealActionArea = document.getElementById('unsealActionArea');
     const currentRollValEl = document.getElementById('currentRollVal');
     const boxChoiceGrid = document.getElementById('boxChoiceGrid');
 
+    document.getElementById('initGameBtn').addEventListener('click', () => {
+      document.getElementById('startScreen').style.display = 'none';
+      instructionText.innerText = "Roll 1 of 5";
+    });
+
+    // 3D Dice Rolling Animation Mechanics
     document.getElementById('rollDiceBtn').addEventListener('click', () => {
       document.getElementById('rollDiceBtn').disabled = true;
-      instructionText.innerText = "Rolling 3D Dice...";
+      instructionText.innerText = "Rolling 3D Physics Dice...";
 
       let counter = 0;
       const rollInterval = setInterval(() => {
+        sfx.playRoll();
         currentRollValue = Math.floor(Math.random() * 6) + 1;
         currentRollValEl.innerText = currentRollValue;
+
+        // Animate 3D Dice Tumble
+        diceMesh.rotation.x += 0.4;
+        diceMesh.rotation.y += 0.5;
+        diceMesh.position.y = 2.5 + Math.sin(counter) * 0.4;
+
         counter++;
 
-        // Spin boxes slightly for tactile feel
-        boxMeshes.forEach(b => { b.rotation.y += 0.2; });
-
-        if (counter > 12) {
+        if (counter > 14) {
           clearInterval(rollInterval);
-          instructionText.innerText = "Roll locked! Where should she place it?";
+          diceMesh.position.y = 2.5;
+          instructionText.innerText = "Roll locked! She chooses the box:";
           rollActionArea.style.display = 'none';
           placeActionArea.style.display = 'block';
           renderBoxChoiceButtons();
@@ -467,23 +584,24 @@
       boxMeshes[boxIdx].userData.assignedValue = currentRollValue;
       placedCount++;
 
-      // Visual feedback on 3D box
-      boxMeshes[boxIdx].material.emissiveIntensity = 0.6;
+      // Pulse selected box
+      boxMeshes[boxIdx].material.emissiveIntensity = 0.8;
 
       placeActionArea.style.display = 'none';
 
       if (placedCount < 5) {
-        instructionText.innerText = `Roll for Box ${placedCount + 1}`;
+        instructionText.innerText = `Roll ${placedCount + 1} of 5`;
         rollActionArea.style.display = 'block';
         document.getElementById('rollDiceBtn').disabled = false;
       } else {
-        instructionText.innerText = "All Boxes Loaded! Ready to Unseal.";
-        startUnboxingCeremony();
+        instructionText.innerText = "All 5 Boxes Loaded! Ready to Unseal.";
+        unsealActionArea.style.display = 'block';
       }
     }
 
+    document.getElementById('unsealVaultBtn').addEventListener('click', startUnboxingCeremony);
+
     function startUnboxingCeremony() {
-      // Calculate outcomes based on the user-placed dice values
       const catVal = boxMeshes[0].userData.assignedValue;
       const targetValDice = boxMeshes[1].userData.assignedValue;
       const actionValDice = boxMeshes[2].userData.assignedValue;
@@ -534,10 +652,14 @@
     }
 
     function renderUnboxStep() {
+      sfx.playExplode();
+      triggerParticles();
+      triggerShake();
+
       const stageData = masterBlueprint[unboxIndex];
       const boxObj = boxMeshes[unboxIndex];
 
-      document.getElementById('modalTitle').innerText = `Unboxing ${boxObj.userData.name} Box (Rolled: ${boxObj.userData.assignedValue})`;
+      document.getElementById('modalTitle').innerText = `Exploding Box ${unboxIndex + 1}: ${boxObj.userData.name} (Rolled: ${boxObj.userData.assignedValue})`;
       const containerEl = document.getElementById('modalContentContainer');
 
       if (stageData.isCeleb) {
@@ -560,8 +682,9 @@
       const nextBtn = document.getElementById('modalNextBtn');
       if (unboxIndex < 4) {
         document.getElementById('blueprintBox').style.display = 'none';
-        nextBtn.innerText = `Unseal ${boxMeshes[unboxIndex + 1].userData.name} Box 💥`;
+        nextBtn.innerText = `Explode Box ${unboxIndex + 2}: ${boxMeshes[unboxIndex + 1].userData.name} 💥`;
       } else {
+        // FULL 5TH BOX STAGE FINALLY SHOWS BLUEPRINT
         const bpRows = document.getElementById('blueprintRows');
         bpRows.innerHTML = '';
         masterBlueprint.forEach((d, i) => {
@@ -582,14 +705,54 @@
       }
     });
 
-    // Render loop for smooth 3D box floating
+    // Screen Shake & Explosive Particle Burst
+    function triggerShake() {
+      const card = document.getElementById('modalCard');
+      card.classList.add('shake');
+      setTimeout(() => card.classList.remove('shake'), 400);
+    }
+
+    const fxCanvas = document.getElementById('fx-canvas');
+    const fxCtx = fxCanvas.getContext('2d');
+    let particles = [];
+
+    function resizeFx() { fxCanvas.width = window.innerWidth; fxCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeFx);
+    resizeFx();
+
+    function triggerParticles() {
+      particles = [];
+      const colors = ['#f3c653', '#ff2a6d', '#10b981', '#3b82f6', '#a855f7'];
+      for (let i = 0; i < 110; i++) {
+        particles.push({
+          x: window.innerWidth / 2, y: window.innerHeight / 2,
+          vx: (Math.random() - 0.5) * 22, vy: (Math.random() - 0.7) * 22,
+          size: Math.random() * 9 + 4, color: colors[Math.floor(Math.random() * colors.length)], life: 1
+        });
+      }
+      requestAnimationFrame(updateParticles);
+    }
+
+    function updateParticles() {
+      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.35; p.life -= 0.015;
+        fxCtx.fillStyle = p.color;
+        fxCtx.globalAlpha = Math.max(p.life, 0);
+        fxCtx.fillRect(p.x, p.y, p.size, p.size);
+      });
+      particles = particles.filter(p => p.life > 0);
+      if (particles.length > 0) requestAnimationFrame(updateParticles);
+    }
+
+    // Floating 3D Render Loop
     let clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
 
       boxMeshes.forEach((mesh, i) => {
-        mesh.position.y = -0.5 + Math.sin(time * 1.5 + i) * 0.15;
+        mesh.position.y = -0.6 + Math.sin(time * 1.5 + i) * 0.12;
         mesh.rotation.y += 0.005;
       });
 
