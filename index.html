@@ -387,7 +387,7 @@
       
       <!-- Action 1: Roll Dice -->
       <div id="rollActionArea">
-        <button class="btn" id="rollDiceBtn">Roll Stylish Die 🎲</button>
+        <button class="btn" id="rollDiceBtn">Roll Black &amp; Gold Die 🎲</button>
       </div>
 
       <!-- Action 2: Choose Mystery Box (Click 3D boxes or buttons) -->
@@ -494,18 +494,19 @@
     }
 
     const poolData = {
-      categories: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
+      categories: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "condom", "Item / Prop"],
       sub_her_body: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
       sub_clothing: ["Bra", "Knickers", "Skirt", "Shirt", "Hijab", "Dress", "Heels", "Jeans", "Gloves", "Stockings"],
       sub_myself: ["Stomach", "Balls", "Chest", "Hand", "Face", "Feet"],
-      sub_item: ["Waffle Blanket", "Kitchen Counter", "Mirror", "Sofa Cushion", "Car Bonnet", "Chair", "Phone Screen"],
+      sub_condom: ["now you can have your fun."],
+      sub_item: ["Table", "Kitchen Counter", "Mirror", "Sofa Cushion", "table", "glass", "Phone Screen", "shoes", "plate", "biscuit" ],
       
       act_standard: ["Leave on", "Clean off", "Play with it", "Take pictures", "Taste it", "Share it"],
       act_glasses_mouth: ["Take pictures", "Taste it", "Swallow", "Share it"],
       act_hands: ["Taste it", "Share it", "Play with it", "Use as lube", "Rub in face", "Put in ass"],
       act_celeb: ["Blindfold Him + Wank Over Celeb (Pics for Humiliation / Self-Play)"],
 
-      methods: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy Assisted"],
+      methods: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy"],
       
       climax: [
         "She's trying to break it off",
@@ -559,14 +560,14 @@
     const sfx = new SoundFX();
 
     /* ==================================================================
-       SECTION 3C: THREE.JS 3D SCENE & LIGHTING (RESPONSIVE FOR MOBILE)
+       SECTION 3C: THREE.JS 3D SCENE & LIGHTING (RESPONSIVE & SPACED OUT)
     =================================================================== */
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x07040a, 0.03);
 
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 3.5, 12);
+    camera.position.set(0, 3.8, 14.5); // Pushed back slightly so nothing feels too close
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -577,7 +578,7 @@
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0xf3c653, 3.0, 30);
+    const pointLight1 = new THREE.PointLight(0xf3c653, 3.0, 35);
     pointLight1.position.set(0, 6, 4);
     scene.add(pointLight1);
 
@@ -605,8 +606,6 @@
         mesh.position.x = startX + idx * boxSpacing;
         mesh.scale.setScalar(isMobile ? 0.75 : 1.0);
       });
-
-      camera.position.z = isMobile ? 14 : 12;
     }
 
     boxConfigs.forEach((cfg, idx) => {
@@ -634,31 +633,31 @@
     });
 
     /* ==================================================================
-       SECTION 3D: STYLISH BRIGHT DICE & EXACT FACE MATCHING
+       SECTION 3D: BLACK & GOLD STYLISH DIE
     =================================================================== */
     const diceGroup = new THREE.Group();
-    diceGroup.position.set(0, 2.3, 2);
+    diceGroup.position.set(0, 2.2, 2);
 
-    // Canvas Texture Generator for Die Faces (1 to 6)
-    function createDieFaceTexture(numberText) {
+    // Canvas Texture Generator for Die Faces (1 to 6) in Black & Gold
+    function createBlackGoldDieFaceTexture(numberText) {
       const canvas = document.createElement('canvas');
       canvas.width = 512; 
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
 
-      // Bright Luxury Obsidian Face Background
-      ctx.fillStyle = '#1c0e24';
+      // Deep Pitch Black Obsidian Background
+      ctx.fillStyle = '#08040d';
       ctx.fillRect(0, 0, 512, 512);
 
-      // Bright Gold Frame
-      ctx.lineWidth = 16;
+      // Crisp Gold Border Outline
+      ctx.lineWidth = 18;
       ctx.strokeStyle = '#f3c653';
-      ctx.strokeRect(20, 20, 472, 472);
+      ctx.strokeRect(22, 22, 468, 468);
 
-      // Glowing Embossed Number
+      // Glowing Gold Embossed Number
       ctx.shadowColor = '#f3c653';
-      ctx.shadowBlur = 30;
-      ctx.fillStyle = '#ffffff';
+      ctx.shadowBlur = 25;
+      ctx.fillStyle = '#f3c653';
       ctx.font = '900 260px Outfit, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -673,11 +672,9 @@
     let dieMaterials = [];
     for (let i = 1; i <= 6; i++) {
       dieMaterials.push(new THREE.MeshStandardMaterial({
-        map: createDieFaceTexture(i),
-        roughness: 0.1,
-        metalness: 0.9,
-        emissive: 0xf3c653,
-        emissiveIntensity: 0.2
+        map: createBlackGoldDieFaceTexture(i),
+        roughness: 0.15,
+        metalness: 0.85
       }));
     }
 
@@ -747,7 +744,7 @@
       instructionText.innerText = "Roll 1 of 5";
     });
 
-    // Roll Stylish Die Logic
+    // Roll Black & Gold Die Logic
     document.getElementById('rollDiceBtn').addEventListener('click', () => {
       document.getElementById('rollDiceBtn').disabled = true;
       instructionText.innerText = "Rolling Die...";
@@ -760,13 +757,13 @@
 
         dieMesh.rotation.x += 0.8;
         dieMesh.rotation.y += 1.0;
-        diceGroup.position.y = 2.3 + Math.sin(counter) * 0.4;
+        diceGroup.position.y = 2.2 + Math.sin(counter) * 0.4;
 
         counter++;
 
         if (counter > 15) {
           clearInterval(rollInterval);
-          diceGroup.position.y = 2.3;
+          diceGroup.position.y = 2.2;
           
           // Snap to exact matching face rotation
           const targetRot = faceRotations[currentRollValue];
@@ -1068,8 +1065,8 @@
         }
       });
 
-      // Gentle floating animation for stylish die
-      diceGroup.position.y = 2.3 + Math.sin(time * 2) * 0.15;
+      // Gentle floating animation for die
+      diceGroup.position.y = 2.2 + Math.sin(time * 2) * 0.15;
       diceGroup.rotation.y += 0.008;
 
       // Exploding shard physics animation
