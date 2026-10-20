@@ -60,6 +60,7 @@
     #webgl-container { position: fixed; inset: 0; z-index: 1; }
     #fx-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 95; }
 
+    /* Start Screen */
     .start-screen {
       position: fixed;
       inset: 0;
@@ -90,6 +91,7 @@
       line-height: 1.5;
     }
 
+    /* HUD Layer */
     .hud-layer {
       position: relative;
       z-index: 10;
@@ -149,6 +151,7 @@
     .btn:active { transform: translateY(1px) scale(0.98); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
+    /* Box Grids */
     .box-choice-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -186,6 +189,7 @@
       border-color: #190f1d;
     }
 
+    /* Modals */
     .overlay {
       position: fixed;
       inset: 0;
@@ -226,11 +230,34 @@
     .modal-main-text {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 800;
       color: #fff;
       margin: 1rem 0;
       line-height: 1.2;
+    }
+
+    .celeb-card {
+      background: #07040a;
+      border: 1px solid var(--panel-border);
+      padding: 1rem;
+      border-radius: 14px;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .celeb-folder {
+      font-size: 0.8rem;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .celeb-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 0.3rem;
     }
 
     .blueprint-box {
@@ -267,6 +294,7 @@
   <canvas id="fx-canvas"></canvas>
   <div id="webgl-container"></div>
 
+  <!-- Start Screen -->
   <div class="start-screen" id="startScreen">
     <h2>The Vault</h2>
     <p>5 Dice Rolls. 5 Mystery Boxes. Choose your unboxing order.</p>
@@ -303,6 +331,7 @@
     </div>
   </div>
 
+  <!-- Unboxing Ceremony Modal -->
   <div class="overlay" id="revealOverlay">
     <div class="modal-card" id="modalCard">
       <div class="modal-title" id="modalTitle">Unboxing Box...</div>
@@ -320,35 +349,38 @@
   </div>
 
   <script>
+    // FULL CELEBRITY DATABASE SUB-FOLDERS & NAMES
+    const celebrityDatabase = {
+      "Royals / Politicians": ["Angela Rayner", "Kate (Princess)", "Louise Haigh", "Penny Mordaunt", "Zarah Sultana"],
+      "News / Weather": ["Abby Dewhurst", "Amy Garcia", "Charlotte Hawkins", "Fiona Bruce", "Jo Blythe", "Kate Garraway", "Katherine Shrevesbou", "Keeley Donovan", "Laura Tobin", "Lucrezia Millarini", "Lucy Verasamy", "Laxmy Gopal", "Naga Munchetty", "Ranvir Singh", "Sally Nugent", "Sian Williams", "Susanna Reid", "Tina Daheley"],
+      "Hospital Dramas": ["Angela Griffin", "Nina Wadia", "Sunetra Sarker", "Tina Hobley"],
+      "Emmerdale": ["Beth Cordingly", "Charley Webb", "Claire King", "Fiona Wade", "Hayley Tamaddon", "Isabel Hodgins", "Lucy Pargeter", "Natalie Anderson", "Natalie J Robb", "Rebecca Sarker", "Roxanne Pallett", "Sammy Winward", "Verity Rushworth", "Zoe Henry"],
+      "Eastenders": ["Charlie Brooks", "Jo Joyner", "Kara Tointon", "Lacey Turner", "Louisa Lytton", "Martine McCutcheon", "Samantha Womack", "Shona McGarty"],
+      "Coronation Street": ["Alexandra Mardell", "Brooke Vincent", "Catherine Tyldesley", "Faye Brookes", "Georgia May Foote", "Helen Flanagan", "Jane Danson", "Julia Goulding", "Katherine Kelly", "Katie McGlynn", "Kym Marsh", "Michelle Keegan", "Nikki Sanderson", "Sair Khan", "Sally Lindsay", "Samia Longchambon", "Shobna Gulati", "Suranne Jones", "Tina O'Brien", "Tupele Dorgu", "Vicky Binns"],
+      "911": ["Athena (Angela Bassett)", "Grace (Sierra McClain)", "Maddie (Jennifer Love Hewitt)", "Marjan (Natacha Karam)", "Nancy (Brianna Baker)", "Tommy (Gina Torres)"]
+    };
+
+    function getRandomCeleb() {
+      const cats = Object.keys(celebrityDatabase);
+      const chosenCat = cats[Math.floor(Math.random() * cats.length)];
+      const names = celebrityDatabase[chosenCat];
+      const chosenName = names[Math.floor(Math.random() * names.length)];
+      return { category: chosenCat, name: chosenName };
+    }
+
     const poolData = {
-      categories: ["Celebrity", "Group / Show", "Target", "Action", "Climax"],
-      
-      // Updated with the custom celebrity and group lists from your folders[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span)
-      sub_celebs: [
-        "Alex Jones", "Alex Scott", "Alice Roberts", "Amanda Holden", "Andrea McLean", 
-        "Angelica Bell", "Anita Rani", "Anna Kendrick", "Ashley Jensen", "Becky Hill", 
-        "Cariad Lloyd", "Carol Vorderman", "Caroline Flack", "Charlotte Church", "Cherry Healy", 
-        "Christine Bleakley", "Claire Sweeney", "Davina McCall", "Ellie Pitt", "Emma Willis", 
-        "Fern Brady", "Frankie Bridge", "Gemma Atkinson", "Hannah Waddingham", "Helen Skelton", 
-        "Holly Willoughby", "Jossa Jassa", "Jamie Lee O'Donnell", "Jemma Coleman", "Jenny Falconer", 
-        "Jill Halfpenny", "Josie Gibson", "Kate Bottley", "Kate Quilton", "Kate Ritchie", 
-        "Katy Hill", "Konnie Huq", "Laura Woods", "Lisa Snowdon", "Lorraine Kelly", 
-        "Louise Redknapp", "Lucy Beaumont", "Lucy Porter", "Megan McCubbin", "Melanie Sykes", 
-        "Michaela Strachan", "Michelle Ackerley", "Myleene Klass", "Nadiya Hussain", "Naomi Schiff", 
-        "Natalie Pinkham", "Naga Munchetty", "Rachael Riley", "Rebecca Atkinson", "Rebecca Ryan", 
-        "Rochelle Humes", "Rose Matafeo", "Rosie Ramsey", "Sally Phillips", "Sam Quek", 
-        "Sara Pascoe", "Sarah Jane Dunn", "Sheridan Smith", "Sophie Turner", "Stacey Dooley", 
-        "Stacey Solomon", "Suzi Perry", "Victoria Coren Mitchell"
-      ],
-
-      sub_groups: [
-        "911", "Coronation Street", "Eastenders", 
-        "Emmerdale", "FBI", "Groups", "Hospital Dramas", "News / Weather", "Royals / Politicians"
-      ],
-
-      sub_targets: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
+      categories: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
+      sub_her_body: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
+      sub_clothing: ["Bra", "Knickers", "Skirt", "Shirt", "Hijab", "Dress", "Heels", "Jeans", "Gloves", "Stockings"],
+      sub_myself: ["Stomach", "Balls", "Chest", "Hand", "Face", "Feet"],
+      sub_item: ["Waffle Blanket", "Kitchen Counter", "Mirror", "Sofa Cushion", "Car Bonnet", "Chair", "Phone Screen"],
       
       act_standard: ["Leave on", "Clean off", "Play with it", "Take pictures", "Taste it", "Share it"],
+      act_glasses_mouth: ["Take pictures", "Taste it", "Swallow", "Share it"],
+      act_hands: ["Taste it", "Share it", "Play with it", "Use as lube", "Rub in face", "Put in ass"],
+      act_celeb: ["Blindfold Him + Wank Over Celeb (Pics for Humiliation / Self-Play)"],
+
+      methods: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy Assisted"],
       
       climax: [
         "She's trying to break it off",
@@ -399,6 +431,7 @@
 
     const sfx = new SoundFX();
 
+    // THREE.SCENE SETUP
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x07040a, 0.03);
@@ -616,24 +649,48 @@
     });
 
     function prepareOutcomes() {
-      const celebValDice = boxMeshes[0].userData.assignedValue;
-      const groupValDice = boxMeshes[1].userData.assignedValue;
-      const targetValDice = boxMeshes[2].userData.assignedValue;
-      const actionValDice = boxMeshes[3].userData.assignedValue;
+      const catVal = boxMeshes[0].userData.assignedValue;
+      const targetValDice = boxMeshes[1].userData.assignedValue;
+      const actionValDice = boxMeshes[2].userData.assignedValue;
+      const methodValDice = boxMeshes[3].userData.assignedValue;
       const climaxValDice = boxMeshes[4].userData.assignedValue;
 
-      const celebText = poolData.sub_celebs[(celebValDice - 1 + Math.floor(Math.random() * 10)) % poolData.sub_celebs.length];
-      const groupText = poolData.sub_groups[(groupValDice - 1 + Math.floor(Math.random() * 5)) % poolData.sub_groups.length];
-      const targetText = poolData.sub_targets[(targetValDice - 1) % poolData.sub_targets.length];
-      const actionText = poolData.act_standard[(actionValDice - 1) % poolData.act_standard.length];
+      const cat = poolData.categories[(catVal - 1) % poolData.categories.length];
+      
+      let targetPool = poolData.sub_her_body;
+      let actPool = poolData.act_standard;
+      let isCeleb = false;
+
+      if (cat.includes("Clothing")) targetPool = poolData.sub_clothing;
+      else if (cat.includes("Myself")) targetPool = poolData.sub_myself;
+      else if (cat.includes("Celebrity")) { isCeleb = true; actPool = poolData.act_celeb; }
+      else if (cat.includes("Item")) targetPool = poolData.sub_item;
+
+      let targetText = "";
+      let celebPick = null;
+
+      if (isCeleb) {
+        celebPick = getRandomCeleb();
+        targetText = `📂 ${celebPick.category} ➔ ${celebPick.name}`;
+      } else {
+        targetText = targetPool[(targetValDice - 1) % targetPool.length];
+      }
+
+      if (cat.includes("Body Part")) {
+        if (targetText === "Glasses" || targetText === "Mouth") actPool = poolData.act_glasses_mouth;
+        else if (targetText === "Hands") actPool = poolData.act_hands;
+      }
+
+      const actionText = actPool[(actionValDice - 1) % actPool.length];
+      const methodText = poolData.methods[(methodValDice - 1) % poolData.methods.length];
       const climaxText = poolData.climax[(climaxValDice - 1) % poolData.climax.length];
 
       masterBlueprint = [
-        { title: "Celebrity Focus", val: celebText },
-        { title: "Group / Show", val: groupText },
-        { title: "Target Area", val: targetText },
-        { title: "Action", val: actionText },
-        { title: "Climax Rule", val: climaxText }
+        { title: "Stage 1: Category", val: cat, isCeleb: false },
+        { title: "Stage 2: Target", val: targetText, isCeleb: isCeleb, celeb: celebPick },
+        { title: "Stage 3: Action", val: actionText, isCeleb: false },
+        { title: "Stage 4: Method", val: methodText, isCeleb: false },
+        { title: "Stage 5: Over The Edge", val: climaxText, isCeleb: false }
       ];
 
       boxMeshes.forEach((mesh, i) => {
@@ -669,7 +726,18 @@
 
       document.getElementById('modalTitle').innerText = `${boxObj.name} Box Unsealed (Rolled: ${boxObj.userData.assignedValue})`;
       const containerEl = document.getElementById('modalContentContainer');
-      containerEl.innerHTML = `<div class="modal-main-text">${stageData.val}</div>`;
+
+      if (stageData.isCeleb) {
+        containerEl.innerHTML = `
+          <div style="font-size:1.05rem; color:var(--accent-gold); font-weight:800; margin-bottom:0.3rem;">Secondary Celeb Result:</div>
+          <div class="celeb-card">
+            <div class="celeb-folder">📂 ${stageData.celeb.category}</div>
+            <div class="celeb-name">${stageData.celeb.name}</div>
+          </div>
+        `;
+      } else {
+        containerEl.innerHTML = `<div class="modal-main-text">${stageData.val}</div>`;
+      }
 
       const nextBtn = document.getElementById('modalNextBtn');
       if (openedCount < 5) {
