@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Branching Decision Engine</title>
+  <title>Ultimate Decision Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
@@ -365,31 +365,29 @@
 
     const sfx = new SoundFX();
 
-    // DYNAMIC WHEELS DATABASE
     const masterData = {
       category: {
         title: "Stage 1: Pick Category",
         badgeId: "badge-category",
-        defaultOpts: ["Body Part", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop", "Wildcard Target"],
+        defaultOpts: ["Body Part", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
         opts: []
       },
-      // BRANCHED SUB-WHEELS
       sub_body: {
         title: "Target: Body Part",
         badgeId: "badge-target",
-        defaultOpts: ["Face / Mouth", "Chest / Cleavage", "Tummy / Abs", "Back / Booty", "Inside / Creampie", "Feet / Toes", "Neck / Collarbone", "Her Choice"],
+        defaultOpts: ["Face / Mouth", "Chest / Cleavage", "Tummy / Abs", "Back / Booty", "Inside / Creampie", "Her Choice"],
         opts: []
       },
       sub_clothing: {
         title: "Target: Clothing",
         badgeId: "badge-target",
-        defaultOpts: ["Bra / Lingerie", "Panties", "Stockings / Tights", "Shirt / Top", "High Heels", "Glasses / Spec-lens"],
+        defaultOpts: ["Bra / Lingerie", "Panties", "Stockings / Tights", "High Heels", "Glasses / Spec-lens"],
         opts: []
       },
       sub_myself: {
         title: "Target: Myself / Self",
         badgeId: "badge-target",
-        defaultOpts: ["My Own Chest", "My Own Hands", "My Own Tummy", "In a Towel / Tissue", "Free-Fire Air Finish"],
+        defaultOpts: ["My Own Chest", "My Own Hands", "My Own Tummy", "In a Towel / Tissue"],
         opts: []
       },
       sub_celebrity: {
@@ -404,7 +402,6 @@
         defaultOpts: ["Bedding / Sheets", "Waffle Blanket", "Toy Surface", "Mirror Surface", "Chair / Furniture"],
         opts: []
       },
-      // COMMON LATER STAGES
       method: {
         title: "Stage 3: Method / Act",
         badgeId: "badge-method",
@@ -425,7 +422,6 @@
       }
     };
 
-    // Initialize all options
     Object.keys(masterData).forEach(k => {
       masterData[k].opts = [...masterData[k].defaultOpts];
     });
@@ -467,7 +463,8 @@
       }
 
       options.forEach((opt, idx) => {
-        const start = currentAngle + idx * sliceAngle;
+        // Slices start drawing from 3 o'clock position in standard canvas arc order
+        const start = currentAngle + (idx * sliceAngle);
         const end = start + sliceAngle;
 
         ctx.beginPath();
@@ -517,8 +514,11 @@
       const extraRounds = 5 + Math.floor(Math.random() * 4);
       const randomSliceIndex = Math.floor(Math.random() * numSlices);
       
-      const targetSliceCenter = (2 * Math.PI) - (randomSliceIndex * sliceAngle + sliceAngle / 2);
-      const totalRotation = (extraRounds * 2 * Math.PI) + targetSliceCenter - (currentAngle % (2 * Math.PI));
+      // Pointer sits at the top (12 o'clock, which is -Math.PI / 2 or 1.5 * Math.PI in canvas coordinates)
+      // Calculate exact rotation required to center the chosen slice under the top pointer
+      const pointerAngle = 1.5 * Math.PI;
+      const targetSliceMid = randomSliceIndex * sliceAngle + sliceAngle / 2;
+      const totalRotation = (extraRounds * 2 * Math.PI) + (pointerAngle - targetSliceMid) - (currentAngle % (2 * Math.PI));
 
       const duration = 4500;
       const startAngle = currentAngle;
@@ -530,8 +530,11 @@
         const easeOut = 1 - Math.pow(1 - progress, 3);
         currentAngle = startAngle + totalRotation * easeOut;
 
-        const normalizedAngle = (2 * Math.PI - (currentAngle % (2 * Math.PI))) % (2 * Math.PI);
-        const currentSegment = Math.floor(normalizedAngle / sliceAngle);
+        // Accurate tick detection matching visual movement
+        const normalizedAngle = (1.5 * Math.PI - currentAngle) % (2 * Math.PI);
+        const positiveAngle = (normalizedAngle + 2 * Math.PI) % (2 * Math.PI);
+        const currentSegment = Math.floor(positiveAngle / sliceAngle) % numSlices;
+
         if (currentSegment !== lastSegmentIndex) {
           sfx.playTick();
           pointer.classList.add('bounce');
@@ -561,13 +564,13 @@
       const key = getCurrentKey();
       selections[key] = resultText;
 
-      // Handle Branching Logic if Step 1 (Category)
+      // Dynamic branch routing based strictly on actual category picked
       if (key === 'category') {
         if (resultText.includes("Clothing")) activeSequenceKeys[1] = "sub_clothing";
         else if (resultText.includes("Myself")) activeSequenceKeys[1] = "sub_myself";
         else if (resultText.includes("Celebrity") || resultText.includes("Fantasy")) activeSequenceKeys[1] = "sub_celebrity";
         else if (resultText.includes("Item") || resultText.includes("Prop")) activeSequenceKeys[1] = "sub_item";
-        else activeSequenceKeys[1] = "sub_body"; // Default Body Part
+        else activeSequenceKeys[1] = "sub_body";
       }
 
       const overlay = document.getElementById('resultOverlay');
@@ -583,7 +586,6 @@
         seqBox.style.display = 'none';
         nextBtn.innerText = "Next Wheel →";
       } else {
-        // Output full sequence
         const seqContent = document.getElementById('resSequenceContent');
         const targetSubKey = activeSequenceKeys[1];
         seqContent.innerHTML = `
@@ -644,7 +646,6 @@
       document.getElementById('stage-title').innerText = data.title;
       document.getElementById('editor-title').innerText = `Edit ${data.title}`;
 
-      // Update badges
       const badgeIds = ["badge-category", "badge-target", "badge-method", "badge-position", "badge-wildcard"];
       badgeIds.forEach((bId, idx) => {
         const badge = document.getElementById(bId);
