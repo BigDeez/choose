@@ -3,21 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Vault — Intimate Decision Engine</title>
+  <title>The Secret Vault — Blind Dice Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Playfair+Display:ital,wght@1,600;1,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #070508;
-      --panel: #120a14;
-      --panel-border: #2a162e;
-      --card-bg: #190f1d;
-      --card-hover: #26162c;
-      --text: #f3e8f6;
-      --accent-rose: #e63946;
+      --bg: #09050d;
+      --panel: #140a1a;
+      --panel-border: #2d163a;
+      --text: #f5eaf8;
       --accent-gold: #d4af37;
-      --accent-glow: rgba(230, 57, 70, 0.25);
+      --accent-rose: #e63946;
       --font-main: 'Outfit', sans-serif;
       --font-serif: 'Playfair Display', serif;
     }
@@ -27,8 +24,8 @@
     body {
       background-color: var(--bg);
       background-image: 
-        radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 50% 120%, rgba(230, 57, 70, 0.15) 0%, transparent 60%);
+        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 50% 100%, rgba(230, 57, 70, 0.15) 0%, transparent 60%);
       color: var(--text);
       font-family: var(--font-main);
       min-height: 100vh;
@@ -46,7 +43,7 @@
       font-family: var(--font-serif);
       font-style: italic;
       font-size: 2.8rem;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 1px;
       background: linear-gradient(135deg, #fff 20%, var(--accent-gold) 80%);
       -webkit-background-clip: text;
@@ -59,40 +56,8 @@
       font-size: 0.85rem;
       letter-spacing: 3px;
       text-transform: uppercase;
-      font-weight: 600;
+      font-weight: 800;
       margin-top: 0.3rem;
-    }
-
-    .stage-indicator {
-      display: flex;
-      gap: 0.6rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .badge {
-      padding: 0.4rem 1rem;
-      border-radius: 999px;
-      font-weight: 600;
-      font-size: 0.75rem;
-      letter-spacing: 1.5px;
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      color: #6c5872;
-      transition: all 0.4s ease;
-    }
-
-    .badge.active {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-    }
-
-    .badge.completed {
-      border-color: var(--accent-rose);
-      color: var(--text);
-      background: rgba(230, 57, 70, 0.1);
     }
 
     .main-container {
@@ -104,181 +69,119 @@
       max-width: 650px;
     }
 
-    .vault-card {
-      width: 100%;
+    /* Dice Section */
+    .dice-stage {
       background: var(--panel);
       border: 1px solid var(--panel-border);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 2rem 1.5rem;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
       position: relative;
-      overflow: hidden;
     }
 
-    .vault-card h2 {
-      font-family: var(--font-serif);
-      font-style: italic;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--accent-gold);
-      margin-bottom: 0.5rem;
-      text-align: center;
-    }
-
-    .vault-instructions {
-      color: #9a849f;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-
-    /* Grid of Interactive Choice Cards */
-    .grid-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      width: 100%;
-      margin-bottom: 1.5rem;
-    }
-
-    .choice-tile {
-      background: var(--card-bg);
-      border: 1px solid var(--panel-border);
-      border-radius: 12px;
-      padding: 1.2rem 1rem;
-      text-align: center;
-      cursor: pointer;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    .dice-box {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #2a1636, #120818);
+      border: 2px solid var(--accent-gold);
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 70px;
-      position: relative;
-      overflow: hidden;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #fff;
+      margin: 1.2rem 0;
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.25);
+      transition: transform 0.1s ease;
     }
 
-    .choice-tile::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(212,175,55,0.1), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+    .dice-box.rolling {
+      animation: spinDice 0.5s infinite linear;
     }
 
-    .choice-tile:hover {
-      background: var(--card-hover);
-      border-color: var(--accent-gold);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
-    }
-
-    .choice-tile:hover::after {
-      opacity: 1;
-    }
-
-    .choice-tile:active {
-      transform: translateY(0);
-    }
-
-    /* Controls & Custom Input */
-    .vault-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-      border-top: 1px solid var(--panel-border);
-      padding-top: 1.5rem;
-    }
-
-    .custom-input-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      background: #070508;
-      border: 1px solid var(--panel-border);
-      padding: 0.7rem 1rem;
-      border-radius: 10px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.95rem;
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: var(--accent-gold);
+    @keyframes spinDice {
+      0% { transform: rotate(0deg) scale(1.1); }
+      50% { transform: rotate(180deg) scale(0.9); }
+      100% { transform: rotate(360deg) scale(1.1); }
     }
 
     .btn {
-      background: linear-gradient(135deg, #2a162e, #190f1d);
-      color: var(--accent-gold);
-      border: 1px solid var(--accent-gold);
-      padding: 0.7rem 1.5rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-gold), #997a15);
+      color: #09050d;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.15rem;
+      font-weight: 900;
+      border-radius: 14px;
       cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+      transition: all 0.25s ease;
     }
 
     .btn:hover {
-      background: var(--accent-gold);
-      color: var(--bg);
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 15px 35px rgba(212, 175, 55, 0.5);
     }
+    .btn:active { transform: translateY(1px) scale(0.98); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    .btn-secondary {
-      background: transparent;
-      border-color: var(--panel-border);
-      color: #9a849f;
-    }
-    .btn-secondary:hover {
-      border-color: var(--text);
-      color: var(--text);
-      box-shadow: none;
-    }
-
-    /* Tags manager below */
-    .tags-preview {
+    /* Mystery Boxes Row */
+    .boxes-grid {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      max-height: 80px;
-      overflow-y: auto;
+      gap: 0.8rem;
       width: 100%;
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
     }
 
-    .tag {
-      background: #070508;
-      border: 1px solid var(--panel-border);
-      padding: 0.25rem 0.6rem;
-      border-radius: 6px;
-      font-size: 0.75rem;
+    .mystery-box {
+      width: 90px;
+      height: 110px;
+      border-radius: 16px;
+      border: 2px solid var(--panel-border);
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0.4rem;
-      color: #9a849f;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
     }
 
-    .tag-remove { cursor: pointer; color: var(--accent-rose); font-weight: bold; }
+    .mystery-box.filled {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      transform: scale(1.05);
+    }
 
-    /* Result / Blueprint Modal */
+    .mystery-box .box-label {
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 800;
+      opacity: 0.8;
+    }
+
+    .mystery-box .box-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+    }
+
+    /* Unboxing Reveal Ceremony Overlay */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(7, 5, 8, 0.9);
-      backdrop-filter: blur(10px);
+      background: rgba(9, 5, 13, 0.95);
+      backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -290,383 +193,369 @@
 
     .overlay.show { opacity: 1; pointer-events: auto; }
 
-    .result-card {
+    .reveal-card {
       background: var(--panel);
       border: 2px solid var(--accent-gold);
-      padding: 2.5rem 2rem;
-      border-radius: 24px;
+      padding: 2.5rem 1.8rem;
+      border-radius: 28px;
       text-align: center;
-      max-width: 500px;
+      max-width: 520px;
       width: 90%;
-      transform: scale(0.9);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 0 50px rgba(212, 175, 55, 0.25);
+      box-shadow: 0 0 60px rgba(212, 175, 55, 0.3);
     }
 
-    .overlay.show .result-card { transform: scale(1); }
-
-    .result-title {
+    .reveal-title {
       font-size: 0.85rem;
-      color: #9a849f;
+      color: var(--accent-gold);
       text-transform: uppercase;
       letter-spacing: 2px;
-      margin-bottom: 0.5rem;
+      font-weight: 800;
     }
 
-    .result-main {
+    .reveal-item-text {
       font-family: var(--font-serif);
       font-style: italic;
       font-size: 2.2rem;
-      font-weight: 800;
+      font-weight: 900;
       color: #fff;
-      margin: 0.5rem 0 1.5rem 0;
+      margin: 1.2rem 0;
       line-height: 1.2;
+      text-shadow: 0 0 20px rgba(230, 57, 70, 0.5);
     }
 
-    .blueprint-box {
+    .final-blueprint {
       text-align: left;
-      background: #070508;
-      border: 1px solid var(--panel-border);
+      background: #09050d;
+      border: 1px dashed var(--accent-gold);
       padding: 1.2rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
+      border-radius: 16px;
+      margin-top: 1rem;
     }
 
-    .blueprint-item {
-      font-size: 0.9rem;
-      color: #9a849f;
-      margin-bottom: 0.4rem;
+    .blueprint-row {
+      font-size: 0.95rem;
+      margin-bottom: 0.6rem;
+      color: #d1b8d8;
     }
 
-    .blueprint-item span {
+    .blueprint-row span {
       color: var(--accent-gold);
-      font-weight: 600;
+      font-weight: 800;
     }
+
+    #fx-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 90; }
   </style>
 </head>
 <body>
 
+  <canvas id="fx-canvas"></canvas>
+
   <header>
-    <h1>The Vault</h1>
-    <p class="sub-heading">Intimate Sequence Generator</p>
+    <h1>The Secret Vault</h1>
+    <p class="sub-heading">Blind Dice Sequence Engine</p>
   </header>
 
-  <div class="stage-indicator">
-    <div id="badge-0" class="badge active">1. CATEGORY</div>
-    <div id="badge-1" class="badge">2. TARGET</div>
-    <div id="badge-2" class="badge">3. ACTION</div>
-    <div id="badge-3" class="badge">4. METHOD</div>
-    <div id="badge-4" class="badge">5. OVER THE EDGE</div>
-  </div>
-
   <main class="main-container">
-    <div class="vault-card">
-      <h2 id="vaultTitle">Select Category</h2>
-      <p class="vault-instructions" id="vaultInstructions">Tap a card to unlock the path.</p>
+    <div class="dice-stage">
+      <h2 id="stagePrompt" style="font-family: var(--font-serif); font-style: italic; font-size: 1.6rem; color: var(--accent-gold);">Roll 1: Mystery Box 1</h2>
       
-      <div class="grid-options" id="gridOptions">
-        <!-- Dynamically populated tiles -->
-      </div>
+      <div class="dice-box" id="diceBox">?</div>
 
-      <div class="vault-controls">
-        <div class="custom-input-row">
-          <input type="text" id="customInput" placeholder="Add custom option...">
-          <button class="btn" id="addCustomBtn">Add Card</button>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="tags-preview" id="tagsPreview"></div>
-          <button class="btn btn-secondary" id="resetBtn" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">Reset Default</button>
-        </div>
-      </div>
+      <button class="btn" id="rollBtn">ROLL DICE</button>
+
+      <div class="boxes-grid" id="boxesGrid"></div>
     </div>
   </main>
 
-  <!-- Result Modal -->
-  <div class="overlay" id="resultOverlay">
-    <div class="result-card">
-      <div class="result-title" id="resTitle">Unlocked</div>
-      <div class="result-main" id="resText">Selection</div>
-      <div class="blueprint-box" id="blueprintBox" style="display: none;">
-        <div style="font-size:0.75rem; color:var(--accent-gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.6rem; font-weight:bold;">Complete Blueprint</div>
-        <div id="blueprintContent"></div>
+  <!-- Reveal Modal -->
+  <div class="overlay" id="revealOverlay">
+    <div class="reveal-card">
+      <div class="reveal-title" id="revTitle">Unboxing Stage 1...</div>
+      <div class="reveal-item-text" id="revText">...</div>
+
+      <div class="final-blueprint" id="finalBlueprint" style="display: none;">
+        <div style="font-size: 0.8rem; color: var(--accent-gold); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 0.8rem;">Master Execution Plan</div>
+        <div id="blueprintRows"></div>
       </div>
-      <button class="btn" id="nextStepBtn" style="width: 100%; padding: 0.9rem;">Continue Journey →</button>
+
+      <button class="btn" id="nextUnboxBtn" style="width: 100%; margin-top: 1.5rem;">Explode Next Box 💥</button>
     </div>
-  </div>
+  </main>
 
   <script>
-    // Subtle Web Audio Haptic Ticks
-    class AudioEngine {
+    class SoundFX {
       constructor() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
       }
-      playClick() {
+      playRoll() {
         if (this.ctx.state === 'suspended') this.ctx.resume();
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.05);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(this.ctx.currentTime + 0.05);
+        osc.stop(this.ctx.currentTime + 0.1);
       }
-      playChime() {
+      playExplode() {
         if (this.ctx.state === 'suspended') this.ctx.resume();
-        [523.25, 659.25, 783.99].forEach((freq, i) => {
+        const notes = [200, 400, 600, 800];
+        notes.forEach((freq, idx) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.07);
-          gain.gain.setValueAtTime(0, this.ctx.currentTime + i * 0.07);
-          gain.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + i * 0.07 + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.07 + 0.3);
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.05);
+          gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.05 + 0.3);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
-          osc.start(this.ctx.currentTime + i * 0.07);
-          osc.stop(this.ctx.currentTime + i * 0.07 + 0.3);
+          osc.start(this.ctx.currentTime + idx * 0.05);
+          osc.stop(this.ctx.currentTime + idx * 0.05 + 0.3);
         });
       }
     }
 
-    const audio = new AudioEngine();
+    const sfx = new SoundFX();
 
-    const vaultData = {
-      category: {
-        title: "The Category",
-        instructions: "Choose where to begin this session.",
-        defaultOpts: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
-        opts: []
-      },
-      sub_her_body: {
-        title: "Her Body Part",
-        instructions: "Select the primary focal point.",
-        defaultOpts: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
-        opts: []
-      },
-      act_standard_body: {
-        title: "The Action",
-        instructions: "Determine what happens next.",
-        defaultOpts: ["Leave on", "Clean off", "Play with it", "Take pictures", "Taste it", "Share it"],
-        opts: []
-      },
-      act_glasses_mouth: {
-        title: "The Action",
-        instructions: "Determine what happens next.",
-        defaultOpts: ["Take pictures", "Taste it", "Swallow", "Share it"],
-        opts: []
-      },
-      act_her_hands: {
-        title: "The Action",
-        instructions: "Determine what happens with her hands.",
-        defaultOpts: ["Taste it", "Share it", "Play with it", "Use as lube", "Rub in face", "Put in ass"],
-        opts: []
-      },
-      sub_clothing: {
-        title: "Clothing Item",
-        instructions: "Select the garment involved.",
-        defaultOpts: ["Bra", "Knickers", "Skirt", "Shirt", "Hijab", "Dress", "Heels", "Jeans", "Gloves", "Stockings"],
-        opts: []
-      },
-      act_clothing: {
-        title: "Clothing Action",
-        instructions: "Choose what happens to the item.",
-        defaultOpts: ["Leave it", "Clean it", "Taste it", "Share it", "Play with it", "Take pictures"],
-        opts: []
-      },
-      sub_myself: {
-        title: "Your Body Part",
-        instructions: "Where is the focus placed on you?",
-        defaultOpts: ["Stomach", "Balls", "Chest", "Hand", "Face", "Feet"],
-        opts: []
-      },
-      act_myself: {
-        title: "The Task",
-        instructions: "What is she required to do?",
-        defaultOpts: ["Taste it", "Share it", "Play with it", "Use as lube", "Clean it up"],
-        opts: []
-      },
-      sub_celeb: {
-        title: "Fantasy Persona",
-        instructions: "Choose the inspiration for the scene.",
-        defaultOpts: ["Holly Willoughby", "Maya Jama", "Kelly Brook", "Amanda Holden", "Michelle Keegan", "Rita Ora", "Florence Pugh", "Gemma Atkinson"],
-        opts: []
-      },
-      act_celeb: {
-        title: "Fantasy Rule",
-        instructions: "The established rule for this round.",
-        defaultOpts: ["Blindfold Him + Wank Over Celeb (Pics for Humiliation / Self-Play)"],
-        opts: []
-      },
-      sub_item: {
-        title: "Naughty Prop",
-        instructions: "Select the item to incorporate.",
-        defaultOpts: ["Waffle Blanket", "Kitchen Counter", "Mirror", "Sofa Cushion", "Car Bonnet", "Chair", "Phone Screen"],
-        opts: []
-      },
-      act_item: {
-        title: "Prop Action",
-        instructions: "Choose the interaction.",
-        defaultOpts: ["Take pics", "Play with it", "Lick it off"],
-        opts: []
-      },
-      method: {
-        title: "The Method",
-        instructions: "Choose the primary technique.",
-        defaultOpts: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy Assisted"],
-        opts: []
-      },
-      climax: {
-        title: "Over The Edge",
-        instructions: "The final rule for crossing the line.",
-        defaultOpts: [
-          "She's trying to break it off",
-          "No stopping till every drop is out",
-          "Edge 3 times before release",
-          "Ruined hands off",
-          "Slow motion only",
-          "Denial trap. Stop for 30 seconds before continuing",
-          "Mrs takes control (stop/go/fast/slow etc)",
-          "Cock and ball torture"
-        ],
-        opts: []
-      }
+    // GAME DATA POOL
+    const poolData = {
+      categories: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
+      sub_her_body: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
+      sub_clothing: ["Bra", "Knickers", "Skirt", "Shirt", "Hijab", "Dress", "Heels", "Jeans", "Gloves", "Stockings"],
+      sub_myself: ["Stomach", "Balls", "Chest", "Hand", "Face", "Feet"],
+      sub_celeb: ["Holly Willoughby", "Maya Jama", "Kelly Brook", "Amanda Holden", "Michelle Keegan", "Rita Ora", "Florence Pugh", "Gemma Atkinson"],
+      sub_item: ["Waffle Blanket", "Kitchen Counter", "Mirror", "Sofa Cushion", "Car Bonnet", "Chair", "Phone Screen"],
+      
+      act_standard: ["Leave on", "Clean off", "Play with it", "Take pictures", "Taste it", "Share it"],
+      act_glasses_mouth: ["Take pictures", "Taste it", "Swallow", "Share it"],
+      act_hands: ["Taste it", "Share it", "Play with it", "Use as lube", "Rub in face", "Put in ass"],
+      act_celeb: ["Blindfold Him + Wank Over Celeb (Pics for Humiliation / Self-Play)"],
+
+      methods: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy Assisted"],
+      
+      climax: [
+        "She's trying to break it off",
+        "No stopping till every drop is out",
+        "Edge 3 times before release",
+        "Ruined hands off",
+        "Slow motion only",
+        "Denial trap. Stop for 30 seconds before continuing",
+        "Mrs takes control (stop/go/fast/slow etc)",
+        "Cock and ball torture"
+      ]
     };
 
-    Object.keys(vaultData).forEach(k => {
-      vaultData[k].opts = [...vaultData[k].defaultOpts];
+    // Shuffled palette of colors for the boxes so colors change every single game
+    const boxColorsPool = [
+      { name: "Velvet", bg: "#4a0e17", border: "#e63946" },
+      { name: "Gold", bg: "#3a2e0b", border: "#d4af37" },
+      { name: "Emerald", bg: "#0b2e1b", border: "#2a9d8f" },
+      { name: "Midnight", bg: "#101b3b", border: "#4cc9f0" },
+      { name: "Amethyst", bg: "#2a0b3b", border: "#7209b7" }
+    ];
+
+    let currentRollStep = 0;
+    let diceResults = [];
+    let activeBoxColors = [];
+    let unboxStep = 0;
+    let finalBlueprintData = [];
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function initGame() {
+      currentRollStep = 0;
+      diceResults = [];
+      unboxStep = 0;
+      finalBlueprintData = [];
+      activeBoxColors = shuffle([...boxColorsPool]);
+
+      document.getElementById('stagePrompt').innerText = `Roll 1: ${activeBoxColors[0].name} Box`;
+      document.getElementById('diceBox').innerText = '?';
+      document.getElementById('rollBtn').disabled = false;
+
+      const grid = document.getElementById('boxesGrid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const box = document.createElement('div');
+        box.className = 'mystery-box';
+        box.id = `box-${i}`;
+        box.style.background = activeBoxColors[i].bg;
+        box.style.borderColor = activeBoxColors[i].border;
+        box.innerHTML = `
+          <div class="box-label" style="color:${activeBoxColors[i].border}">${activeBoxColors[i].name}</div>
+          <div class="box-val" id="box-val-${i}">?</div>
+        `;
+        grid.appendChild(box);
+      }
+    }
+
+    const rollBtn = document.getElementById('rollBtn');
+    const diceBox = document.getElementById('diceBox');
+
+    rollBtn.addEventListener('click', () => {
+      rollBtn.disabled = true;
+      diceBox.classList.add('rolling');
+
+      let rolls = 0;
+      const interval = setInterval(() => {
+        sfx.playRoll();
+        diceBox.innerText = Math.floor(Math.random() * 6) + 1;
+        rolls++;
+        if (rolls > 12) {
+          clearInterval(interval);
+          diceBox.classList.remove('rolling');
+          
+          const finalVal = Math.floor(Math.random() * 6) + 1;
+          diceBox.innerText = finalVal;
+          diceResults.push(finalVal);
+
+          // Update Box UI
+          const currentBox = document.getElementById(`box-${currentRollStep}`);
+          currentBox.classList.add('filled');
+          document.getElementById(`box-val-${currentRollStep}`).innerText = finalVal;
+
+          currentRollStep++;
+
+          if (currentRollStep < 5) {
+            document.getElementById('stagePrompt').innerText = `Roll ${currentRollStep + 1}: ${activeBoxColors[currentRollStep].name} Box`;
+            rollBtn.disabled = false;
+          } else {
+            document.getElementById('stagePrompt').innerText = "All Boxes Locked! Ready to Reveal...";
+            rollBtn.innerText = "UNSEAL THE VAULT 🔓";
+            rollBtn.disabled = false;
+            rollBtn.onclick = startUnboxingCeremony;
+          }
+        }
+      }, 80);
     });
 
-    let activeSequence = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
-    let currentStep = 0;
-    let selections = {};
+    // UNBOXING CEREMONY & EXPLO-REVEAL
+    function startUnboxingCeremony() {
+      // Calculate the selections based on dice results
+      const cat = poolData.categories[(diceResults[0] - 1) % poolData.categories.length];
+      
+      let targetPool = poolData.sub_her_body;
+      let actPool = poolData.act_standard;
 
-    function getCurrentKey() {
-      return activeSequence[currentStep];
-    }
-
-    function renderVault() {
-      const key = getCurrentKey();
-      const data = vaultData[key];
-
-      document.getElementById('vaultTitle').innerText = data.title;
-      document.getElementById('vaultInstructions').innerText = data.instructions;
-
-      // Badges
-      for (let i = 0; i < 5; i++) {
-        const badge = document.getElementById(`badge-${i}`);
-        if (i < currentStep) badge.className = "badge completed";
-        else if (i === currentStep) badge.className = "badge active";
-        else badge.className = "badge";
+      if (cat.includes("Clothing")) {
+        targetPool = poolData.sub_clothing;
+        actPool = poolData.act_standard;
+      } else if (cat.includes("Myself")) {
+        targetPool = poolData.sub_myself;
+        actPool = poolData.act_standard;
+      } else if (cat.includes("Celebrity")) {
+        targetPool = poolData.sub_celeb;
+        actPool = poolData.act_celeb;
+      } else if (cat.includes("Item")) {
+        targetPool = poolData.sub_item;
+        actPool = poolData.act_standard;
       }
 
-      // Grid Cards
-      const grid = document.getElementById('gridOptions');
-      grid.innerHTML = '';
-      data.opts.forEach((opt, idx) => {
-        const tile = document.createElement('div');
-        tile.className = 'choice-tile';
-        tile.innerText = opt;
-        tile.onclick = () => selectOption(opt);
-        grid.appendChild(tile);
-      });
+      const target = targetPool[(diceResults[1] - 1) % targetPool.length];
 
-      renderTags();
-    }
-
-    function renderTags() {
-      const key = getCurrentKey();
-      const preview = document.getElementById('tagsPreview');
-      preview.innerHTML = '';
-      vaultData[key].opts.forEach((opt, idx) => {
-        const tag = document.createElement('div');
-        tag.className = 'tag';
-        tag.innerHTML = `<span>${opt}</span><span class="tag-remove" onclick="removeOption(${idx})">&times;</span>`;
-        preview.appendChild(tag);
-      });
-    }
-
-    function removeOption(idx) {
-      const key = getCurrentKey();
-      vaultData[key].opts.splice(idx, 1);
-      renderVault();
-    }
-
-    document.getElementById('addCustomBtn').onclick = () => {
-      const input = document.getElementById('customInput');
-      const val = input.value.trim();
-      if (!val) return;
-      const key = getCurrentKey();
-      vaultData[key].opts.push(val);
-      input.value = '';
-      renderVault();
-    };
-
-    document.getElementById('resetBtn').onclick = () => {
-      const key = getCurrentKey();
-      vaultData[key].opts = [...vaultData[key].defaultOpts];
-      renderVault();
-    };
-
-    function selectOption(opt) {
-      audio.playChime();
-      const key = getCurrentKey();
-      selections[key] = opt;
-
-      // Branching logic updates
-      if (key === 'category') {
-        if (opt.includes("Body Part")) activeSequence = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
-        else if (opt.includes("Clothing")) activeSequence = ["category", "sub_clothing", "act_clothing", "method", "climax"];
-        else if (opt.includes("Myself")) activeSequence = ["category", "sub_myself", "act_myself", "method", "climax"];
-        else if (opt.includes("Celebrity")) activeSequence = ["category", "sub_celeb", "act_celeb", "method", "climax"];
-        else if (opt.includes("Item")) activeSequence = ["category", "sub_item", "act_item", "method", "climax"];
-      } else if (key === 'sub_her_body') {
-        if (opt === "Hair") activeSequence = ["category", "sub_her_body", "method", "climax"];
-        else if (opt === "Glasses" || opt === "Mouth") activeSequence = ["category", "sub_her_body", "act_glasses_mouth", "method", "climax"];
-        else if (opt === "Hands") activeSequence = ["category", "sub_her_body", "act_her_hands", "method", "climax"];
-        else activeSequence = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
+      // Dynamic action override if body part
+      if (cat.includes("Body Part")) {
+        if (target === "Glasses" || target === "Mouth") actPool = poolData.act_glasses_mouth;
+        else if (target === "Hands") actPool = poolData.act_hands;
       }
 
-      const overlay = document.getElementById('resultOverlay');
-      document.getElementById('resTitle').innerText = `${vaultData[key].title} Unlocked`;
-      document.getElementById('resText').innerText = opt;
+      const action = actPool[(diceResults[2] - 1) % actPool.length];
+      const method = poolData.methods[(diceResults[3] - 1) % poolData.methods.length];
+      const climaxRule = poolData.climax[(diceResults[4] - 1) % poolData.climax.length];
 
-      const blueprintBox = document.getElementById('blueprintBox');
-      const nextBtn = document.getElementById('nextStepBtn');
+      finalBlueprintData = [
+        { title: "Stage 1: Category", val: cat },
+        { title: "Stage 2: Target", val: target },
+        { title: "Stage 3: Action", val: action },
+        { title: "Stage 4: Method", val: method },
+        { title: "Stage 5: Over The Edge", val: climaxRule }
+      ];
 
-      if (currentStep < activeSequence.length - 1) {
-        blueprintBox.style.display = 'none';
-        nextBtn.innerText = "Continue Journey →";
+      unboxStep = 0;
+      document.getElementById('revealOverlay').classList.add('show');
+      showUnboxStep();
+    }
+
+    function showUnboxStep() {
+      sfx.playExplode();
+      triggerParticles();
+
+      const item = finalBlueprintData[unboxStep];
+      const colorObj = activeBoxColors[unboxStep];
+
+      document.getElementById('revTitle').innerText = `Exploding ${colorObj.name} Box (Dice Rolled: ${diceResults[unboxStep]})`;
+      document.getElementById('revTitle').style.color = colorObj.border;
+      document.getElementById('revText').innerText = item.val;
+
+      const nextBtn = document.getElementById('nextUnboxBtn');
+
+      if (unboxStep < 4) {
+        document.getElementById('finalBlueprint').style.display = 'none';
+        nextBtn.innerText = `Explode ${activeBoxColors[unboxStep + 1].name} Box 💥`;
       } else {
-        let html = `<div class="blueprint-item">1. Category: <span>${selections['category']}</span></div>`;
-        activeSequence.forEach((k, idx) => {
-          if (idx > 0) html += `<div class="blueprint-item">${idx + 1}. ${vaultData[k].title}: <span>${selections[k]}</span></div>`;
+        // Show master final blueprint
+        const bpRows = document.getElementById('blueprintRows');
+        bpRows.innerHTML = '';
+        finalBlueprintData.forEach((d, i) => {
+          bpRows.innerHTML += `<div class="blueprint-row">${i + 1}. ${d.title}: <span>${d.val}</span></div>`;
         });
-        document.getElementById('blueprintContent').innerHTML = html;
-        blueprintBox.style.display = 'block';
-        nextBtn.innerText = "Seal & Restart ↺";
-      }
 
-      overlay.classList.add('show');
+        document.getElementById('finalBlueprint').style.display = 'block';
+        nextBtn.innerText = "Start New Game ↺";
+      }
     }
 
-    document.getElementById('nextStepBtn').onclick = () => {
-      audio.playClick();
-      document.getElementById('resultOverlay').classList.remove('show');
-      if (currentStep < activeSequence.length - 1) {
-        currentStep++;
+    document.getElementById('nextUnboxBtn').addEventListener('click', () => {
+      if (unboxStep < 4) {
+        unboxStep++;
+        showUnboxStep();
       } else {
-        currentStep = 0;
-        activeSequence = ["category", "sub_her_body", "act_standard_body", "method", "climax"];
-        selections = {};
+        document.getElementById('revealOverlay').classList.remove('show');
+        location.reload();
       }
-      renderVault();
-    };
+    });
 
-    renderVault();
+    // Particle Burst Canvas
+    const fxCanvas = document.getElementById('fx-canvas');
+    const fxCtx = fxCanvas.getContext('2d');
+    let particles = [];
+
+    function resizeFx() { fxCanvas.width = window.innerWidth; fxCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeFx);
+    resizeFx();
+
+    function triggerParticles() {
+      particles = [];
+      const colors = ['#d4af37', '#e63946', '#7209b7', '#4cc9f0', '#2a9d8f'];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: window.innerWidth / 2, y: window.innerHeight / 2,
+          vx: (Math.random() - 0.5) * 18, vy: (Math.random() - 0.7) * 18,
+          size: Math.random() * 8 + 4, color: colors[Math.floor(Math.random() * colors.length)], life: 1
+        });
+      }
+      requestAnimationFrame(updateParticles);
+    }
+
+    function updateParticles() {
+      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.015;
+        fxCtx.fillStyle = p.color;
+        fxCtx.globalAlpha = Math.max(p.life, 0);
+        fxCtx.fillRect(p.x, p.y, p.size, p.size);
+      });
+      particles = particles.filter(p => p.life > 0);
+      if (particles.length > 0) requestAnimationFrame(updateParticles);
+    }
+
+    initGame();
   </script>
 </body>
 </html>
