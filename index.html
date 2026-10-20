@@ -244,7 +244,7 @@
 
     .overlay.show .result-card { transform: scale(1); }
     .result-title { font-size: 1.1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; }
-    .result-main { font-size: 2rem; font-weight: 900; color: #fff; margin: 0.8rem 0; line-height: 1.2; }
+    .result-main { font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0.8rem 0; line-height: 1.2; }
 
     .result-sequence-list {
       margin-top: 1.2rem;
@@ -255,7 +255,7 @@
       border: 1px dashed var(--accent-3);
     }
 
-    .result-seq-item { font-size: 0.95rem; margin-bottom: 0.4rem; color: #cbd5e1; }
+    .result-seq-item { font-size: 0.9rem; margin-bottom: 0.4rem; color: #cbd5e1; }
     .result-seq-item span { color: var(--accent-3); font-weight: 700; }
 
     .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
@@ -466,7 +466,16 @@
       climax: {
         title: "Stage 5: Over The Edge",
         badgeId: "badge-climax",
-        defaultOpts: ["Full Throttle", "Edged 3 Times First", "Wrong Method Finish", "Ruined / Hands-Off Finish", "Slow Motion Only", "Mrs Take Control", "Denial Trap (2 Min Pause)", "Blindfolded Blast"],
+        defaultOpts: [
+          "She's trying to break it off",
+          "No stopping till every drop is out",
+          "Edge 3 times before release",
+          "Ruined hands off",
+          "Slow motion only",
+          "Denial trap. Stop for 30 seconds before continuing",
+          "Mrs takes control (stop/go/fast/slow etc)",
+          "Cock and ball torture"
+        ],
         opts: []
       }
     };
@@ -530,10 +539,10 @@
         ctx.rotate(start + sliceAngle / 2);
         ctx.textAlign = 'right';
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 16px Outfit';
+        ctx.font = 'bold 15px Outfit';
         ctx.shadowColor = 'rgba(0,0,0,0.6)';
         ctx.shadowBlur = 6;
-        ctx.fillText(opt, radius - 35, 6);
+        ctx.fillText(opt, radius - 35, 5);
         ctx.restore();
       });
 
