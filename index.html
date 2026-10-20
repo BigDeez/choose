@@ -108,22 +108,23 @@
       margin: 1rem 0;
     }
 
+    /* Right-side pointer styling */
     .pointer {
       position: absolute;
-      top: -15px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
       width: 0;
       height: 0;
-      border-left: 16px solid transparent;
-      border-right: 16px solid transparent;
-      border-top: 28px solid var(--accent-1);
+      border-top: 16px solid transparent;
+      border-bottom: 16px solid transparent;
+      border-right: 28px solid var(--accent-1);
       z-index: 10;
       filter: drop-shadow(0 0 10px var(--accent-1));
       transition: transform 0.1s ease;
     }
 
-    .pointer.bounce { transform: translateX(-50%) translateY(-5px) scale(1.1); }
+    .pointer.bounce { transform: translateY(-50%) translateX(5px) scale(1.1); }
 
     canvas {
       width: 100%;
@@ -463,7 +464,6 @@
       }
 
       options.forEach((opt, idx) => {
-        // Slices start drawing from 3 o'clock position in standard canvas arc order
         const start = currentAngle + (idx * sliceAngle);
         const end = start + sliceAngle;
 
@@ -514,9 +514,8 @@
       const extraRounds = 5 + Math.floor(Math.random() * 4);
       const randomSliceIndex = Math.floor(Math.random() * numSlices);
       
-      // Pointer sits at the top (12 o'clock, which is -Math.PI / 2 or 1.5 * Math.PI in canvas coordinates)
-      // Calculate exact rotation required to center the chosen slice under the top pointer
-      const pointerAngle = 1.5 * Math.PI;
+      // Pointer sits at the right side (3 o'clock, which is 0 radians in canvas coordinates)
+      const pointerAngle = 0;
       const targetSliceMid = randomSliceIndex * sliceAngle + sliceAngle / 2;
       const totalRotation = (extraRounds * 2 * Math.PI) + (pointerAngle - targetSliceMid) - (currentAngle % (2 * Math.PI));
 
@@ -530,8 +529,7 @@
         const easeOut = 1 - Math.pow(1 - progress, 3);
         currentAngle = startAngle + totalRotation * easeOut;
 
-        // Accurate tick detection matching visual movement
-        const normalizedAngle = (1.5 * Math.PI - currentAngle) % (2 * Math.PI);
+        const normalizedAngle = (0 - currentAngle) % (2 * Math.PI);
         const positiveAngle = (normalizedAngle + 2 * Math.PI) % (2 * Math.PI);
         const currentSegment = Math.floor(positiveAngle / sliceAngle) % numSlices;
 
@@ -564,7 +562,6 @@
       const key = getCurrentKey();
       selections[key] = resultText;
 
-      // Dynamic branch routing based strictly on actual category picked
       if (key === 'category') {
         if (resultText.includes("Clothing")) activeSequenceKeys[1] = "sub_clothing";
         else if (resultText.includes("Myself")) activeSequenceKeys[1] = "sub_myself";
