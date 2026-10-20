@@ -1,25 +1,22 @@
-Here is the complete, standalone index.html file.
-It includes the entire massive celebrity database (all the names from your folders across Royals/Politicians, News/Weather, Hospital Dramas, Emmerdale, EastEnders, Coronation Street, and 911) built directly into the file.
-When the blind dice roll lands on Celebrity / Fantasy, it automatically picks 6 random celebrities from your list and displays their exact subfolder directory name so your Mrs can find them instantly without stress.
-Complete Single-File Code (index.html)
-Copy and paste this directly into your index.html file on GitHub:
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Secret Vault — Dice Engine</title>
+  <title>Nocturne — The 3D Intimate Vault</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+  <!-- Load Three.js for 3D Graphics -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
-      --bg: #09050d;
-      --panel: #140a1a;
-      --panel-border: #2d163a;
-      --text: #f5eaf8;
-      --accent-gold: #d4af37;
-      --accent-rose: #e63946;
+      --bg: #050208;
+      --panel: #0d0612;
+      --panel-border: #3b174a;
+      --text: #f9f0fc;
+      --accent-gold: #f3c653;
+      --accent-rose: #ff2a6d;
       --font-main: 'Outfit', sans-serif;
       --font-serif: 'Playfair Display', serif;
     }
@@ -28,28 +25,25 @@ Copy and paste this directly into your index.html file on GitHub:
 
     body {
       background-color: var(--bg);
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 60%),
-        radial-gradient(circle at 50% 100%, rgba(230, 57, 70, 0.15) 0%, transparent 60%);
       color: var(--text);
       font-family: var(--font-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 1.5rem 1rem;
+      justify-content: space-between;
       overflow-x: hidden;
+      padding: 1rem;
     }
 
-    header { text-align: center; margin-bottom: 1.2rem; }
+    header { text-align: center; margin-top: 0.5rem; z-index: 10; }
 
     h1 {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 2.6rem;
+      font-size: 2.5rem;
       font-weight: 900;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       background: linear-gradient(135deg, #fff 20%, var(--accent-gold) 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -57,139 +51,125 @@ Copy and paste this directly into your index.html file on GitHub:
     }
 
     .sub-heading {
-      color: #9a849f;
-      font-size: 0.85rem;
-      letter-spacing: 3px;
+      color: #a88ba8;
+      font-size: 0.75rem;
+      letter-spacing: 4px;
       text-transform: uppercase;
       font-weight: 800;
-      margin-top: 0.2rem;
     }
 
-    .main-container {
+    #webgl-container {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* Interactive HUD Overlay */
+    .hud-layer {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 700px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1.2rem;
-      width: 100%;
-      max-width: 600px;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      pointer-events: none;
     }
 
-    .dice-card {
-      background: var(--panel);
+    .hud-layer > * {
+      pointer-events: auto;
+    }
+
+    .control-panel {
+      background: rgba(13, 6, 18, 0.85);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--panel-border);
       border-radius: 24px;
-      padding: 1.8rem 1.2rem;
+      padding: 1.5rem;
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.1);
+      text-align: center;
     }
 
-    .dice-container {
-      width: 100px;
-      height: 100px;
-      background: #1d0f26;
-      border: 3px solid var(--accent-gold);
-      border-radius: 22px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      padding: 12px;
-      margin: 1.2rem 0;
-      box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
-      transition: transform 0.1s ease;
-    }
-
-    .dice-dot {
-      background-color: var(--accent-gold);
-      border-radius: 50%;
-      width: 14px;
-      height: 14px;
-      align-self: center;
-      justify-self: center;
-      opacity: 0;
-      box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-    }
-
-    .dice-container.rolling {
-      animation: rollAnim 0.4s infinite linear;
-    }
-
-    @keyframes rollAnim {
-      0% { transform: rotate(0deg) scale(1.1); }
-      50% { transform: rotate(180deg) scale(0.9); }
-      100% { transform: rotate(360deg) scale(1.1); }
+    .instruction-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.4rem;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
     }
 
     .btn {
-      background: linear-gradient(135deg, var(--accent-gold), #997a15);
-      color: #09050d;
+      background: linear-gradient(135deg, var(--accent-gold), #b38b25);
+      color: #050208;
       border: none;
       padding: 0.9rem 2.2rem;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 900;
       border-radius: 14px;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+      box-shadow: 0 10px 25px rgba(243, 198, 83, 0.3);
       transition: all 0.25s ease;
     }
 
     .btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 15px 35px rgba(212, 175, 55, 0.5);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 15px 30px rgba(243, 198, 83, 0.5);
     }
     .btn:active { transform: translateY(1px) scale(0.98); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    .boxes-grid {
-      display: flex;
+    /* Box Choice Grid for Her */
+    .box-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 0.6rem;
       width: 100%;
-      justify-content: center;
-      margin-top: 1.2rem;
-      flex-wrap: wrap;
+      margin-top: 1rem;
     }
 
-    .mystery-box {
-      width: 85px;
-      height: 100px;
-      border-radius: 16px;
+    .box-choice-btn {
+      background: #190a24;
       border: 2px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 0.8rem 0.4rem;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      gap: 0.3px;
     }
 
-    .mystery-box.filled {
+    .box-choice-btn:hover:not(:disabled) {
       border-color: var(--accent-gold);
-      box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-      transform: scale(1.05);
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px rgba(243, 198, 83, 0.3);
     }
 
-    .box-label {
-      font-size: 0.7rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-weight: 800;
+    .box-choice-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      border-color: #22102e;
     }
 
-    .box-val {
-      font-size: 1.5rem;
-      font-weight: 900;
-    }
-
+    /* Cinematic Modal */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(9, 5, 13, 0.95);
-      backdrop-filter: blur(12px);
+      background: rgba(5, 2, 8, 0.96);
+      backdrop-filter: blur(15px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -201,20 +181,20 @@ Copy and paste this directly into your index.html file on GitHub:
 
     .overlay.show { opacity: 1; pointer-events: auto; }
 
-    .reveal-card {
+    .modal-card {
       background: var(--panel);
       border: 2px solid var(--accent-gold);
-      padding: 2.2rem 1.5rem;
-      border-radius: 26px;
+      padding: 2.2rem 1.8rem;
+      border-radius: 28px;
       text-align: center;
-      max-width: 520px;
+      max-width: 560px;
       width: 90%;
-      box-shadow: 0 0 60px rgba(212, 175, 55, 0.3);
+      box-shadow: 0 0 70px rgba(243, 198, 83, 0.35);
       max-height: 90vh;
       overflow-y: auto;
     }
 
-    .reveal-title {
+    .modal-title {
       font-size: 0.85rem;
       color: var(--accent-gold);
       text-transform: uppercase;
@@ -222,10 +202,10 @@ Copy and paste this directly into your index.html file on GitHub:
       font-weight: 800;
     }
 
-    .reveal-item-text {
+    .modal-main-text {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 900;
       color: #fff;
       margin: 1rem 0;
@@ -241,7 +221,7 @@ Copy and paste this directly into your index.html file on GitHub:
     }
 
     .celeb-card {
-      background: #09050d;
+      background: #050208;
       border: 1px solid var(--panel-border);
       padding: 0.6rem 0.8rem;
       border-radius: 12px;
@@ -252,21 +232,20 @@ Copy and paste this directly into your index.html file on GitHub:
       color: var(--accent-gold);
       text-transform: uppercase;
       font-weight: 800;
-      letter-spacing: 0.5px;
     }
 
     .celeb-name {
       font-size: 0.95rem;
       font-weight: 800;
-      color: #ffffff;
+      color: #fff;
       margin-top: 0.2rem;
     }
 
-    .final-blueprint {
+    .blueprint-box {
       text-align: left;
-      background: #09050d;
+      background: #050208;
       border: 1px dashed var(--accent-gold);
-      padding: 1rem;
+      padding: 1.1rem;
       border-radius: 14px;
       margin-top: 1rem;
     }
@@ -274,55 +253,55 @@ Copy and paste this directly into your index.html file on GitHub:
     .blueprint-row {
       font-size: 0.9rem;
       margin-bottom: 0.5rem;
-      color: #d1b8d8;
+      color: #e2cce6;
     }
 
     .blueprint-row span {
       color: var(--accent-gold);
-      font-weight: 800;
+      font-weight: 900;
     }
-
-    #fx-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 90; }
   </style>
 </head>
 <body>
 
-  <canvas id="fx-canvas"></canvas>
+  <!-- Three.js 3D Canvas Container -->
+  <div id="webgl-container"></div>
 
   <header>
-    <h1>The Secret Vault</h1>
-    <p class="sub-heading">Blind Dice Sequence Engine</p>
+    <h1>Nocturne</h1>
+    <p class="sub-heading">Interactive 3D Vault Engine</p>
   </header>
 
-  <main class="main-container">
-    <div class="dice-card">
-      <h2 id="stagePrompt" style="font-family: var(--font-serif); font-style: italic; font-size: 1.5rem; color: var(--accent-gold);">Roll 1: Mystery Box 1</h2>
+  <div class="hud-layer">
+    <div class="control-panel" id="controlPanel">
+      <div class="instruction-text" id="instructionText">Roll the 3D dice to generate your value</div>
       
-      <div class="dice-container" id="diceContainer">
-        <div class="dice-dot" id="d1"></div><div class="dice-dot" id="d2"></div><div class="dice-dot" id="d3"></div>
-        <div class="dice-dot" id="d4"></div><div class="dice-dot" id="d5"></div><div class="dice-dot" id="d6"></div>
-        <div class="dice-dot" id="d7"></div><div class="dice-dot" id="d8"></div><div class="dice-dot" id="d9"></div>
+      <div id="rollActionArea">
+        <button class="btn" id="rollDiceBtn">Roll Dice 🎲</button>
       </div>
 
-      <button class="btn" id="rollBtn">ROLL DICE</button>
-
-      <div class="boxes-grid" id="boxesGrid"></div>
+      <div id="placeActionArea" style="display: none; width: 100%;">
+        <div style="font-size: 0.9rem; color: #a88ba8; margin-bottom: 0.5rem;">Rolled Value: <span id="currentRollVal" style="color:var(--accent-gold); font-size:1.4rem; font-weight:900;">?</span></div>
+        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem;">She chooses which mystery box receives this roll:</div>
+        <div class="box-choice-grid" id="boxChoiceGrid"></div>
+      </div>
     </div>
-  </main>
+  </div>
 
+  <!-- Cinematic Reveal Modal -->
   <div class="overlay" id="revealOverlay">
-    <div class="reveal-card">
-      <div class="reveal-title" id="revTitle">Unboxing Stage 1...</div>
-      <div id="revTextContainer">
-        <div class="reveal-item-text" id="revText">...</div>
+    <div class="modal-card">
+      <div class="modal-title" id="modalTitle">Unboxing Box...</div>
+      <div id="modalContentContainer">
+        <div class="modal-main-text" id="modalMainText">...</div>
       </div>
 
-      <div class="final-blueprint" id="finalBlueprint" style="display: none;">
-        <div style="font-size: 0.8rem; color: var(--accent-gold); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 0.6rem;">Master Execution Plan</div>
+      <div class="blueprint-box" id="blueprintBox" style="display: none;">
+        <div style="font-size: 0.8rem; color: var(--accent-gold); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; margin-bottom: 0.6rem;">Master Execution Blueprint</div>
         <div id="blueprintRows"></div>
       </div>
 
-      <button class="btn" id="nextUnboxBtn" style="width: 100%; margin-top: 1.2rem;">Explode Next Box 💥</button>
+      <button class="btn" id="modalNextBtn" style="width: 100%; margin-top: 1.2rem;">Unseal Next Box 💥</button>
     </div>
   </div>
 
@@ -347,43 +326,6 @@ Copy and paste this directly into your index.html file on GitHub:
       });
       return all.sort(() => Math.random() - 0.5).slice(0, count);
     }
-
-    class SoundFX {
-      constructor() {
-        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      playRoll() {
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(160, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.08);
-      }
-      playExplode() {
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-        [200, 400, 600, 800].forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.05);
-          gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.05);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.05 + 0.3);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(this.ctx.currentTime + idx * 0.05);
-          osc.stop(this.ctx.currentTime + idx * 0.05 + 0.3);
-        });
-      }
-    }
-
-    const sfx = new SoundFX();
 
     const poolData = {
       categories: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
@@ -411,174 +353,197 @@ Copy and paste this directly into your index.html file on GitHub:
       ]
     };
 
-    const boxColorsPool = [
-      { name: "Velvet", bg: "#4a0e17", border: "#e63946" },
-      { name: "Gold", bg: "#3a2e0b", border: "#d4af37" },
-      { name: "Emerald", bg: "#0b2e1b", border: "#2a9d8f" },
-      { name: "Midnight", bg: "#101b3b", border: "#4cc9f0" },
-      { name: "Amethyst", bg: "#2a0b3b", border: "#7209b7" }
+    // THREE.JS 3D ENVIRONMENT SETUP
+    const container = document.getElementById('webgl-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x050208, 0.035);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 4, 11);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const pointLight1 = new THREE.PointLight(0xf3c653, 2, 20);
+    pointLight1.position.set(0, 5, 2);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0xff2a6d, 2, 25);
+    pointLight2.position.set(-5, -2, -2);
+    scene.add(pointLight2);
+
+    // 3D Mystery Boxes Setup
+    const boxConfigs = [
+      { name: "Velvet", color: 0xaa1133 },
+      { name: "Gold", color: 0xd4af37 },
+      { name: "Emerald", color: 0x118855 },
+      { name: "Midnight", color: 0x2244aa },
+      { name: "Amethyst", color: 0x7722aa }
     ];
 
-    let currentRollStep = 0;
-    let diceResults = [];
-    let activeBoxColors = [];
-    let unboxStep = 0;
-    let finalBlueprintData = [];
+    const boxMeshes = [];
+    const boxSpacing = 2.4;
+    const startX = -((boxConfigs.length - 1) * boxSpacing) / 2;
 
-    const dicePatterns = {
-      1: ['d5'],
-      2: ['d1', 'd9'],
-      3: ['d1', 'd5', 'd9'],
-      4: ['d1', 'd3', 'd7', 'd9'],
-      5: ['d1', 'd3', 'd5', 'd7', 'd9'],
-      6: ['d1', 'd3', 'd4', 'd6', 'd7', 'd9']
-    };
-
-    function renderDiceFace(value) {
-      for (let i = 1; i <= 9; i++) {
-        document.getElementById(`d${i}`).style.opacity = '0';
-      }
-      if (dicePatterns[value]) {
-        dicePatterns[value].forEach(id => {
-          document.getElementById(id).style.opacity = '1';
-        });
-      }
-    }
-
-    function initGame() {
-      currentRollStep = 0;
-      diceResults = [];
-      unboxStep = 0;
-      finalBlueprintData = [];
-      activeBoxColors = [...boxColorsPool].sort(() => Math.random() - 0.5);
-
-      document.getElementById('stagePrompt').innerText = `Roll 1: ${activeBoxColors[0].name} Box`;
-      renderDiceFace(1);
-      document.getElementById('rollBtn').disabled = false;
-
-      const grid = document.getElementById('boxesGrid');
-      grid.innerHTML = '';
-      for (let i = 0; i < 5; i++) {
-        const box = document.createElement('div');
-        box.className = 'mystery-box';
-        box.id = `box-${i}`;
-        box.style.background = activeBoxColors[i].bg;
-        box.style.borderColor = activeBoxColors[i].border;
-        box.innerHTML = `
-          <div class="box-label" style="color:${activeBoxColors[i].border}">${activeBoxColors[i].name}</div>
-          <div class="box-val" id="box-val-${i}">?</div>
-        `;
-        grid.appendChild(box);
-      }
-    }
-
-    const rollBtn = document.getElementById('rollBtn');
-    const diceContainer = document.getElementById('diceContainer');
-
-    rollBtn.addEventListener('click', () => {
-      rollBtn.disabled = true;
-      diceContainer.classList.add('rolling');
-
-      let rolls = 0;
-      const interval = setInterval(() => {
-        sfx.playRoll();
-        const rand = Math.floor(Math.random() * 6) + 1;
-        renderDiceFace(rand);
-        rolls++;
-
-        if (rolls > 12) {
-          clearInterval(interval);
-          diceContainer.classList.remove('rolling');
-          
-          const finalVal = Math.floor(Math.random() * 6) + 1;
-          renderDiceFace(finalVal);
-          diceResults.push(finalVal);
-
-          const currentBox = document.getElementById(`box-${currentRollStep}`);
-          currentBox.classList.add('filled');
-          document.getElementById(`box-val-${currentRollStep}`).innerText = finalVal;
-
-          currentRollStep++;
-
-          if (currentRollStep < 5) {
-            document.getElementById('stagePrompt').innerText = `Roll ${currentRollStep + 1}: ${activeBoxColors[currentRollStep].name} Box`;
-            rollBtn.disabled = false;
-          } else {
-            document.getElementById('stagePrompt').innerText = "All Boxes Locked! Ready to Unbox...";
-            rollBtn.innerText = "UNSEAL THE VAULT 🔓";
-            rollBtn.disabled = false;
-            rollBtn.onclick = startUnboxingCeremony;
-          }
-        }
-      }, 80);
+    boxConfigs.forEach((cfg, idx) => {
+      const geometry = new THREE.BoxGeometry(1.6, 1.8, 1.6);
+      const material = new THREE.MeshStandardMaterial({
+        color: cfg.color,
+        roughness: 0.2,
+        metalness: 0.8,
+        emissive: cfg.color,
+        emissiveIntensity: 0.15
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(startX + idx * boxSpacing, -0.5, 0);
+      mesh.userData = { id: idx, name: cfg.name, assignedValue: null, isOpen: false };
+      scene.add(mesh);
+      boxMeshes.push(mesh);
     });
 
+    // Handle window resizing
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // GAME STATE LOGIC
+    let currentRollValue = null;
+    let placedCount = 0;
+    let unboxIndex = 0;
+    let masterBlueprint = [];
+
+    const instructionText = document.getElementById('instructionText');
+    const rollActionArea = document.getElementById('rollActionArea');
+    const placeActionArea = document.getElementById('placeActionArea');
+    const currentRollValEl = document.getElementById('currentRollVal');
+    const boxChoiceGrid = document.getElementById('boxChoiceGrid');
+
+    document.getElementById('rollDiceBtn').addEventListener('click', () => {
+      document.getElementById('rollDiceBtn').disabled = true;
+      instructionText.innerText = "Rolling 3D Dice...";
+
+      let counter = 0;
+      const rollInterval = setInterval(() => {
+        currentRollValue = Math.floor(Math.random() * 6) + 1;
+        currentRollValEl.innerText = currentRollValue;
+        counter++;
+
+        // Spin boxes slightly for tactile feel
+        boxMeshes.forEach(b => { b.rotation.y += 0.2; });
+
+        if (counter > 12) {
+          clearInterval(rollInterval);
+          instructionText.innerText = "Roll locked! Where should she place it?";
+          rollActionArea.style.display = 'none';
+          placeActionArea.style.display = 'block';
+          renderBoxChoiceButtons();
+        }
+      }, 70);
+    });
+
+    function renderBoxChoiceButtons() {
+      boxChoiceGrid.innerHTML = '';
+      boxMeshes.forEach((mesh, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'box-choice-btn';
+        const isFilled = mesh.userData.assignedValue !== null;
+        btn.disabled = isFilled;
+        btn.innerHTML = `<span>${mesh.userData.name}</span><span style="font-size:1.1rem; color:var(--accent-gold);">${isFilled ? '✓ Locked' : 'Empty'}</span>`;
+        btn.onclick = () => assignRollToBox(idx);
+        boxChoiceGrid.appendChild(btn);
+      });
+    }
+
+    function assignRollToBox(boxIdx) {
+      boxMeshes[boxIdx].userData.assignedValue = currentRollValue;
+      placedCount++;
+
+      // Visual feedback on 3D box
+      boxMeshes[boxIdx].material.emissiveIntensity = 0.6;
+
+      placeActionArea.style.display = 'none';
+
+      if (placedCount < 5) {
+        instructionText.innerText = `Roll for Box ${placedCount + 1}`;
+        rollActionArea.style.display = 'block';
+        document.getElementById('rollDiceBtn').disabled = false;
+      } else {
+        instructionText.innerText = "All Boxes Loaded! Ready to Unseal.";
+        startUnboxingCeremony();
+      }
+    }
+
     function startUnboxingCeremony() {
-      const cat = poolData.categories[(diceResults[0] - 1) % poolData.categories.length];
+      // Calculate outcomes based on the user-placed dice values
+      const catVal = boxMeshes[0].userData.assignedValue;
+      const targetValDice = boxMeshes[1].userData.assignedValue;
+      const actionValDice = boxMeshes[2].userData.assignedValue;
+      const methodValDice = boxMeshes[3].userData.assignedValue;
+      const climaxValDice = boxMeshes[4].userData.assignedValue;
+
+      const cat = poolData.categories[(catVal - 1) % poolData.categories.length];
       
       let targetPool = poolData.sub_her_body;
       let actPool = poolData.act_standard;
       let isCeleb = false;
 
-      if (cat.includes("Clothing")) {
-        targetPool = poolData.sub_clothing;
-      } else if (cat.includes("Myself")) {
-        targetPool = poolData.sub_myself;
-      } else if (cat.includes("Celebrity")) {
-        isCeleb = true;
-        actPool = poolData.act_celeb;
-      } else if (cat.includes("Item")) {
-        targetPool = poolData.sub_item;
-      }
+      if (cat.includes("Clothing")) targetPool = poolData.sub_clothing;
+      else if (cat.includes("Myself")) targetPool = poolData.sub_myself;
+      else if (cat.includes("Celebrity")) { isCeleb = true; actPool = poolData.act_celeb; }
+      else if (cat.includes("Item")) targetPool = poolData.sub_item;
 
-      let targetVal = "";
+      let targetText = "";
       let celebList = [];
 
       if (isCeleb) {
         celebList = getRandomCelebs(6);
-        targetVal = "6 Random Celeb Folders";
+        targetText = "6 Random Celeb Folders";
       } else {
-        targetVal = targetPool[(diceResults[1] - 1) % targetPool.length];
+        targetText = targetPool[(targetValDice - 1) % targetPool.length];
       }
 
       if (cat.includes("Body Part")) {
-        if (targetVal === "Glasses" || targetVal === "Mouth") actPool = poolData.act_glasses_mouth;
-        else if (targetVal === "Hands") actPool = poolData.act_hands;
+        if (targetText === "Glasses" || targetText === "Mouth") actPool = poolData.act_glasses_mouth;
+        else if (targetText === "Hands") actPool = poolData.act_hands;
       }
 
-      const action = actPool[(diceResults[2] - 1) % actPool.length];
-      const method = poolData.methods[(diceResults[3] - 1) % poolData.methods.length];
-      const climaxRule = poolData.climax[(diceResults[4] - 1) % poolData.climax.length];
+      const actionText = actPool[(actionValDice - 1) % actPool.length];
+      const methodText = poolData.methods[(methodValDice - 1) % poolData.methods.length];
+      const climaxText = poolData.climax[(climaxValDice - 1) % poolData.climax.length];
 
-      finalBlueprintData = [
+      masterBlueprint = [
         { title: "Stage 1: Category", val: cat, isCeleb: false },
-        { title: "Stage 2: Target", val: targetVal, isCeleb: isCeleb, celebs: celebList },
-        { title: "Stage 3: Action", val: action, isCeleb: false },
-        { title: "Stage 4: Method", val: method, isCeleb: false },
-        { title: "Stage 5: Over The Edge", val: climaxRule, isCeleb: false }
+        { title: "Stage 2: Target", val: targetText, isCeleb: isCeleb, celebs: celebList },
+        { title: "Stage 3: Action", val: actionText, isCeleb: false },
+        { title: "Stage 4: Method", val: methodText, isCeleb: false },
+        { title: "Stage 5: Over The Edge", val: climaxText, isCeleb: false }
       ];
 
-      unboxStep = 0;
+      unboxIndex = 0;
       document.getElementById('revealOverlay').classList.add('show');
-      showUnboxStep();
+      renderUnboxStep();
     }
 
-    function showUnboxStep() {
-      sfx.playExplode();
-      triggerParticles();
+    function renderUnboxStep() {
+      const stageData = masterBlueprint[unboxIndex];
+      const boxObj = boxMeshes[unboxIndex];
 
-      const item = finalBlueprintData[unboxStep];
-      const colorObj = activeBoxColors[unboxStep];
+      document.getElementById('modalTitle').innerText = `Unboxing ${boxObj.userData.name} Box (Rolled: ${boxObj.userData.assignedValue})`;
+      const containerEl = document.getElementById('modalContentContainer');
 
-      document.getElementById('revTitle').innerText = `Exploding ${colorObj.name} Box (Rolled: ${diceResults[unboxStep]})`;
-      document.getElementById('revTitle').style.color = colorObj.border;
-
-      const container = document.getElementById('revTextContainer');
-
-      if (item.isCeleb) {
-        let html = `<div style="font-size:1.1rem; color:#d4af37; font-weight:800; margin-bottom:0.5rem;">Pick 1 of 6 Random Celebs:</div>`;
+      if (stageData.isCeleb) {
+        let html = `<div style="font-size:1.1rem; color:var(--accent-gold); font-weight:800; margin-bottom:0.5rem;">Pick 1 of 6 Random Celebs:</div>`;
         html += `<div class="celeb-grid">`;
-        item.celebs.forEach((c, idx) => {
+        stageData.celebs.forEach((c, idx) => {
           html += `
             <div class="celeb-card">
               <div class="celeb-folder">📂 ${c.category}</div>
@@ -587,73 +552,50 @@ Copy and paste this directly into your index.html file on GitHub:
           `;
         });
         html += `</div>`;
-        container.innerHTML = html;
+        containerEl.innerHTML = html;
       } else {
-        container.innerHTML = `<div class="reveal-item-text">${item.val}</div>`;
+        containerEl.innerHTML = `<div class="modal-main-text">${stageData.val}</div>`;
       }
 
-      const nextBtn = document.getElementById('nextUnboxBtn');
-
-      if (unboxStep < 4) {
-        document.getElementById('finalBlueprint').style.display = 'none';
-        nextBtn.innerText = `Explode ${activeBoxColors[unboxStep + 1].name} Box 💥`;
+      const nextBtn = document.getElementById('modalNextBtn');
+      if (unboxIndex < 4) {
+        document.getElementById('blueprintBox').style.display = 'none';
+        nextBtn.innerText = `Unseal ${boxMeshes[unboxIndex + 1].userData.name} Box 💥`;
       } else {
         const bpRows = document.getElementById('blueprintRows');
         bpRows.innerHTML = '';
-        finalBlueprintData.forEach((d, i) => {
+        masterBlueprint.forEach((d, i) => {
           bpRows.innerHTML += `<div class="blueprint-row">${i + 1}. ${d.title}: <span>${d.val}</span></div>`;
         });
-
-        document.getElementById('finalBlueprint').style.display = 'block';
-        nextBtn.innerText = "Start New Game ↺";
+        document.getElementById('blueprintBox').style.display = 'block';
+        nextBtn.innerText = "Start New Session ↺";
       }
     }
 
-    document.getElementById('nextUnboxBtn').addEventListener('click', () => {
-      if (unboxStep < 4) {
-        unboxStep++;
-        showUnboxStep();
+    document.getElementById('modalNextBtn').addEventListener('click', () => {
+      if (unboxIndex < 4) {
+        unboxIndex++;
+        renderUnboxStep();
       } else {
         document.getElementById('revealOverlay').classList.remove('show');
         location.reload();
       }
     });
 
-    const fxCanvas = document.getElementById('fx-canvas');
-    const fxCtx = fxCanvas.getContext('2d');
-    let particles = [];
+    // Render loop for smooth 3D box floating
+    let clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const time = clock.getElapsedTime();
 
-    function resizeFx() { fxCanvas.width = window.innerWidth; fxCanvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeFx);
-    resizeFx();
-
-    function triggerParticles() {
-      particles = [];
-      const colors = ['#d4af37', '#e63946', '#7209b7', '#4cc9f0', '#2a9d8f'];
-      for (let i = 0; i < 90; i++) {
-        particles.push({
-          x: window.innerWidth / 2, y: window.innerHeight / 2,
-          vx: (Math.random() - 0.5) * 18, vy: (Math.random() - 0.7) * 18,
-          size: Math.random() * 8 + 4, color: colors[Math.floor(Math.random() * colors.length)], life: 1
-        });
-      }
-      requestAnimationFrame(updateParticles);
-    }
-
-    function updateParticles() {
-      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
-      particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.015;
-        fxCtx.fillStyle = p.color;
-        fxCtx.globalAlpha = Math.max(p.life, 0);
-        fxCtx.fillRect(p.x, p.y, p.size, p.size);
+      boxMeshes.forEach((mesh, i) => {
+        mesh.position.y = -0.5 + Math.sin(time * 1.5 + i) * 0.15;
+        mesh.rotation.y += 0.005;
       });
-      particles = particles.filter(p => p.life > 0);
-      if (particles.length > 0) requestAnimationFrame(updateParticles);
-    }
 
-    initGame();
+      renderer.render(scene, camera);
+    }
+    animate();
   </script>
 </body>
 </html>
-
