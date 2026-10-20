@@ -226,7 +226,7 @@
     .modal-main-text {
       font-family: var(--font-serif);
       font-style: italic;
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 800;
       color: #fff;
       margin: 1rem 0;
@@ -321,34 +321,36 @@
 
   <script>
     const poolData = {
-      celebrities: [
-        "911", "Alex Jones", "Alex Scott", "Alice Roberts", "Amanda Holden", "Andrea McLean",
-        "Angelica Bell", "Anita Rani", "Anna Kendrick", "Ashley Jensen", "Atomic Kitten", "Becky Hill",
-        "Big Bang Theory", "Cariad Lloyd", "Carol Vorderman", "Caroline Flack", "Charlotte Church", "Cherry Healey",
-        "Christine Bleakley", "Clair Buckley", "Claire Sweeney", "Coronation Street", "Davina McCall", "EastEnders",
-        "Ellie Taylor", "Emma Willis", "Emmerdale", "FBI", "Fern Brady", "Frankie Bridge",
-        "Gemma Atkinson", "Girls Aloud", "Gladiators", "Groups", "Hannah Waddingham", "Helen Skelton",
-        "Holly Willoughby", "Hospital Dramas", "Jac Jossa", "Jamie-Lee O'Donnell", "Jenna Coleman", "Jenny Falconer",
-        "Jill Halfpenny", "Jorgie Porter", "Josie Gibson", "Kate Bottley (Rev)", "Kate Quilton", "Kate Ritchie",
-        "Katy Hill", "Konnie Huq", "Laura Woods", "Lisa Snowdon", "Little Mix", "Lorraine Kelly",
-        "Louise Redknapp", "Lucy Beaumont", "Lucy Porter", "Megan McCubbin", "Melanie Sykes", "Michaela Strachan",
-        "Michelle Ackerley", "Myleene Klass", "Nadiya Hussain", "Naomi Schiff", "Natalie Pinkham", "Natasia Demetriou",
-        "NCIS", "News / Weather", "Rachael Riley", "Rebecca Atkinson", "Rebecca Ryan", "Rochelle Humes",
-        "Rose Matafeo", "Rosie Ramsey", "Royals / Politicians", "S Club", "Sally Phillips", "Sam Quek",
-        "Sara Pascoe", "Sarah Jayne Dunn", "Sheridan Smith", "Sophie Turner", "Spice Girls", "Stacey Dooley",
-        "Stacey Solomon", "Steps", "Suzi Perry", "Victoria Coren Mitchell"
+      categories: ["Celebrity", "Group / Show", "Target", "Action", "Climax"],
+      
+      // Updated with the custom celebrity and group lists from your folders[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span)
+      sub_celebs: [
+        "Alex Jones", "Alex Scott", "Alice Roberts", "Amanda Holden", "Andrea McLean", 
+        "Angelica Bell", "Anita Rani", "Anna Kendrick", "Ashley Jensen", "Becky Hill", 
+        "Cariad Lloyd", "Carol Vorderman", "Caroline Flack", "Charlotte Church", "Cherry Healy", 
+        "Christine Bleakley", "Claire Sweeney", "Davina McCall", "Ellie Pitt", "Emma Willis", 
+        "Fern Brady", "Frankie Bridge", "Gemma Atkinson", "Hannah Waddingham", "Helen Skelton", 
+        "Holly Willoughby", "Jossa Jassa", "Jamie Lee O'Donnell", "Jemma Coleman", "Jenny Falconer", 
+        "Jill Halfpenny", "Josie Gibson", "Kate Bottley", "Kate Quilton", "Kate Ritchie", 
+        "Katy Hill", "Konnie Huq", "Laura Woods", "Lisa Snowdon", "Lorraine Kelly", 
+        "Louise Redknapp", "Lucy Beaumont", "Lucy Porter", "Megan McCubbin", "Melanie Sykes", 
+        "Michaela Strachan", "Michelle Ackerley", "Myleene Klass", "Nadiya Hussain", "Naomi Schiff", 
+        "Natalie Pinkham", "Naga Munchetty", "Rachael Riley", "Rebecca Atkinson", "Rebecca Ryan", 
+        "Rochelle Humes", "Rose Matafeo", "Rosie Ramsey", "Sally Phillips", "Sam Quek", 
+        "Sara Pascoe", "Sarah Jane Dunn", "Sheridan Smith", "Sophie Turner", "Stacey Dooley", 
+        "Stacey Solomon", "Suzi Perry", "Victoria Coren Mitchell"
       ],
-      categories: ["Body Part (Her)", "Clothing", "Myself", "Item / Prop"],
-      sub_her_body: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
-      sub_clothing: ["Bra", "Knickers", "Skirt", "Shirt", "Hijab", "Dress", "Heels", "Jeans", "Gloves", "Stockings"],
-      sub_myself: ["Stomach", "Balls", "Chest", "Hand", "Face", "Feet"],
-      sub_item: ["Waffle Blanket", "Kitchen Counter", "Mirror", "Sofa Cushion", "Car Bonnet", "Chair", "Phone Screen"],
+
+      sub_groups: [
+        "911", "Atomic Kitten", "Big Bang Theory", "Coronation Street", "Eastenders", 
+        "Emmerdale", "FBI", "Girls Aloud", "Gladiators", "Groups", "Hospital Dramas", 
+        "Jungle Porter", "Little Mix", "NCIS", "News / Weather", "Royals / Politicians", 
+        "S Club", "Spice Girls", "Steps"
+      ],
+
+      sub_targets: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
       
       act_standard: ["Leave on", "Clean off", "Play with it", "Take pictures", "Taste it", "Share it"],
-      act_glasses_mouth: ["Take pictures", "Taste it", "Swallow", "Share it"],
-      act_hands: ["Taste it", "Share it", "Play with it", "Use as lube", "Rub in face", "Put in ass"],
-
-      methods: ["Blowjob", "Hand job", "Paired (Hand & Mouth)", "Pick a Hand Technique", "Slow vs Speed", "Toy Assisted"],
       
       climax: [
         "She's trying to break it off",
@@ -617,42 +619,23 @@
 
     function prepareOutcomes() {
       const celebValDice = boxMeshes[0].userData.assignedValue;
-      const catValDice = boxMeshes[1].userData.assignedValue;
-      const actionValDice = boxMeshes[2].userData.assignedValue;
-      const methodValDice = boxMeshes[3].userData.assignedValue;
+      const groupValDice = boxMeshes[1].userData.assignedValue;
+      const targetValDice = boxMeshes[2].userData.assignedValue;
+      const actionValDice = boxMeshes[3].userData.assignedValue;
       const climaxValDice = boxMeshes[4].userData.assignedValue;
 
-      // Stage 1: Celebrity Pick (uses seed from dice roll)
-      const celebIndex = ((celebValDice * 17) + 3) % poolData.celebrities.length;
-      const celebText = poolData.celebrities[celebIndex];
-
-      // Stage 2: Category & Target
-      const cat = poolData.categories[(catValDice - 1) % poolData.categories.length];
-      
-      let targetPool = poolData.sub_her_body;
-      let actPool = poolData.act_standard;
-
-      if (cat.includes("Clothing")) targetPool = poolData.sub_clothing;
-      else if (cat.includes("Myself")) targetPool = poolData.sub_myself;
-      else if (cat.includes("Item")) targetPool = poolData.sub_item;
-
-      let targetText = targetPool[(actionValDice - 1) % targetPool.length];
-
-      if (cat.includes("Body Part")) {
-        if (targetText === "Glasses" || targetText === "Mouth") actPool = poolData.act_glasses_mouth;
-        else if (targetText === "Hands") actPool = poolData.act_hands;
-      }
-
-      const actionText = actPool[(methodValDice - 1) % actPool.length];
-      const methodText = poolData.methods[(climaxValDice - 1) % poolData.methods.length];
-      const climaxText = poolData.climax[(celebValDice - 1) % poolData.climax.length];
+      const celebText = poolData.sub_celebs[(celebValDice - 1 + Math.floor(Math.random() * 10)) % poolData.sub_celebs.length];
+      const groupText = poolData.sub_groups[(groupValDice - 1 + Math.floor(Math.random() * 5)) % poolData.sub_groups.length];
+      const targetText = poolData.sub_targets[(targetValDice - 1) % poolData.sub_targets.length];
+      const actionText = poolData.act_standard[(actionValDice - 1) % poolData.act_standard.length];
+      const climaxText = poolData.climax[(climaxValDice - 1) % poolData.climax.length];
 
       masterBlueprint = [
-        { title: "Stage 1: Celebrity Inspiration", val: celebText },
-        { title: "Stage 2: Target Focus", val: `${cat} — ${targetText}` },
-        { title: "Stage 3: Action", val: actionText },
-        { title: "Stage 4: Method", val: methodText },
-        { title: "Stage 5: Over The Edge", val: climaxText }
+        { title: "Celebrity Focus", val: celebText },
+        { title: "Group / Show", val: groupText },
+        { title: "Target Area", val: targetText },
+        { title: "Action", val: actionText },
+        { title: "Climax Rule", val: climaxText }
       ];
 
       boxMeshes.forEach((mesh, i) => {
