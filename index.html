@@ -151,6 +151,15 @@
     .btn:active { transform: translateY(1px) scale(0.98); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
+    .btn-rose {
+      background: linear-gradient(135deg, var(--accent-rose), #9e1441);
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(255, 42, 109, 0.3);
+    }
+    .btn-rose:hover {
+      box-shadow: 0 15px 30px rgba(255, 42, 109, 0.5);
+    }
+
     /* Box Grids */
     .box-choice-grid {
       display: grid;
@@ -239,25 +248,28 @@
 
     .celeb-card {
       background: #07040a;
-      border: 1px solid var(--panel-border);
-      padding: 1rem;
-      border-radius: 14px;
+      border: 2px solid var(--accent-rose);
+      padding: 1.2rem;
+      border-radius: 18px;
       text-align: center;
       margin-top: 1rem;
+      box-shadow: 0 0 25px rgba(255, 42, 109, 0.2);
     }
 
     .celeb-folder {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--accent-gold);
       text-transform: uppercase;
       font-weight: 800;
+      letter-spacing: 1.5px;
     }
 
     .celeb-name {
-      font-size: 1.4rem;
+      font-size: 1.8rem;
       font-weight: 800;
       color: #fff;
-      margin-top: 0.3rem;
+      margin-top: 0.4rem;
+      min-height: 2.4rem;
     }
 
     .blueprint-box {
@@ -337,6 +349,14 @@
       <div class="modal-title" id="modalTitle">Unboxing Box...</div>
       <div id="modalContentContainer">
         <div class="modal-main-text" id="modalMainText">...</div>
+      </div>
+
+      <div id="celebGeneratorBox" style="display: none;">
+        <div class="celeb-card">
+          <div class="celeb-folder" id="slotCategory">📂 SELECTING CATEGORY...</div>
+          <div class="celeb-name" id="slotName">???</div>
+        </div>
+        <button class="btn btn-rose" id="spinCelebBtn" style="width: 100%; margin-top: 1rem;">Spin Celeb Generator 🎰</button>
       </div>
 
       <div class="blueprint-box" id="blueprintBox" style="display: none;">
@@ -510,7 +530,6 @@
     const diceGroup = new THREE.Group();
     diceGroup.position.set(0, 2.5, 2);
 
-    // Inner glowing core
     const coreGeo = new THREE.SphereGeometry(0.7, 32, 32);
     const coreMat = new THREE.MeshStandardMaterial({
       color: 0xf3c653,
@@ -522,7 +541,6 @@
     const coreMesh = new THREE.Mesh(coreGeo, coreMat);
     diceGroup.add(coreMesh);
 
-    // Sleek translucent outer shell
     const shellGeo = new THREE.SphereGeometry(0.95, 32, 32);
     const shellMat = new THREE.MeshPhysicalMaterial({
       color: 0x1a0b2e,
@@ -537,7 +555,6 @@
     const shellMesh = new THREE.Mesh(shellGeo, shellMat);
     diceGroup.add(shellMesh);
 
-    // Flashing orbiting ring
     const ringGeo = new THREE.TorusGeometry(1.2, 0.04, 16, 100);
     const ringMat = new THREE.MeshStandardMaterial({
       color: 0xff2a6d,
@@ -579,6 +596,8 @@
     let openedCount = 0;
     let masterBlueprint = [];
     let boxOutcomes = {};
+    let isCelebSession = false;
+    let finalCelebPick = null;
 
     const instructionText = document.getElementById('instructionText');
     const rollActionArea = document.getElementById('rollActionArea');
@@ -672,19 +691,18 @@
       
       let targetPool = poolData.sub_her_body;
       let actPool = poolData.act_standard;
-      let isCeleb = false;
+      isCelebSession = false;
 
       if (cat.includes("Clothing")) targetPool = poolData.sub_clothing;
       else if (cat.includes("Myself")) targetPool = poolData.sub_myself;
-      else if (cat.includes("Celebrity")) { isCeleb = true; actPool = poolData.act_celeb; }
+      else if (cat.includes("Celebrity")) { isCelebSession = true; actPool = poolData.act_celeb; }
       else if (cat.includes("Item")) targetPool = poolData.sub_item;
 
       let targetText = "";
-      let celebPick = null;
 
-      if (isCeleb) {
-        celebPick = getRandomCeleb();
-        targetText = `📂 ${celebPick.category} ➔ ${celebPick.name}`;
+      if (isCelebSession) {
+        finalCelebPick = getRandomCeleb();
+        targetText = `Celebrity / Fantasy Locked 🔒`;
       } else {
         targetText = targetPool[(targetValDice - 1) % targetPool.length];
       }
@@ -700,7 +718,7 @@
 
       masterBlueprint = [
         { title: "Stage 1: Category", val: cat, isCeleb: false },
-        { title: "Stage 2: Target", val: targetText, isCeleb: isCeleb, celeb: celebPick },
+        { title: "Stage 2: Target", val: targetText, isCeleb: isCelebSession },
         { title: "Stage 3: Action", val: actionText, isCeleb: false },
         { title: "Stage 4: Method", val: methodText, isCeleb: false },
         { title: "Stage 5: Over The Edge", val: climaxText, isCeleb: false }
@@ -739,14 +757,14 @@
 
       document.getElementById('modalTitle').innerText = `${boxObj.name} Box Unsealed (Rolled: ${boxObj.userData.assignedValue})`;
       const containerEl = document.getElementById('modalContentContainer');
+      const celebGenBox = document.getElementById('celebGeneratorBox');
+
+      celebGenBox.style.display = 'none';
 
       if (stageData.isCeleb) {
         containerEl.innerHTML = `
-          <div style="font-size:1.05rem; color:var(--accent-gold); font-weight:800; margin-bottom:0.3rem;">Secondary Celeb Result:</div>
-          <div class="celeb-card">
-            <div class="celeb-folder">📂 ${stageData.celeb.category}</div>
-            <div class="celeb-name">${stageData.celeb.name}</div>
-          </div>
+          <div style="font-size:1.1rem; color:var(--accent-gold); font-weight:800; margin-bottom:0.5rem;">Celebrity Fantasy Locked!</div>
+          <div style="font-size:0.95rem; color:#9a849f; line-height:1.4;">The celebrity mystery identity will remain hidden until you press the generator at the end of the unsealing!</div>
         `;
       } else {
         containerEl.innerHTML = `<div class="modal-main-text">${stageData.val}</div>`;
@@ -760,14 +778,59 @@
         const bpRows = document.getElementById('blueprintRows');
         bpRows.innerHTML = '';
         masterBlueprint.forEach((d, i) => {
-          bpRows.innerHTML += `<div class="blueprint-row">${i + 1}. ${d.title}: <span>${d.val}</span></div>`;
+          bpRows.innerHTML += `<div class="blueprint-row">${i + 1}. ${d.title}: <span id="bpRowVal${i}">${d.val}</span></div>`;
         });
         document.getElementById('blueprintBox').style.display = 'block';
-        nextBtn.innerText = "Start New Session ↺";
+
+        if (isCelebSession) {
+          celebGenBox.style.display = 'block';
+          nextBtn.innerText = "Start New Session ↺";
+        } else {
+          nextBtn.innerText = "Start New Session ↺";
+        }
       }
 
       document.getElementById('revealOverlay').classList.add('show');
     }
+
+    // ANIMATED CELEBRITY SLOT GENERATOR
+    document.getElementById('spinCelebBtn').addEventListener('click', () => {
+      const btn = document.getElementById('spinCelebBtn');
+      btn.disabled = true;
+      
+      const slotCat = document.getElementById('slotCategory');
+      const slotName = document.getElementById('slotName');
+
+      let speed = 50;
+      let counter = 0;
+      const maxTicks = 25;
+
+      const ticker = setInterval(() => {
+        sfx.playRoll();
+        const rand = getRandomCeleb();
+        slotCat.innerText = `📂 ${rand.category}`;
+        slotName.innerText = rand.name;
+        counter++;
+
+        if (counter > maxTicks) {
+          clearInterval(ticker);
+          slotCat.innerText = `📂 ${finalCelebPick.category}`;
+          slotName.innerText = finalCelebPick.name;
+          
+          sfx.playExplode();
+          triggerParticles();
+          triggerShake();
+
+          // Update Blueprint display text live
+          const bpCelebRow = document.getElementById('bpRowVal1');
+          if (bpCelebRow) {
+            bpCelebRow.innerText = `${finalCelebPick.category} ➔ ${finalCelebPick.name}`;
+          }
+
+          btn.innerText = "Target Selected 🔥";
+        }
+      }, speed);
+    });
 
     document.getElementById('modalNextBtn').addEventListener('click', () => {
       document.getElementById('revealOverlay').classList.remove('show');
@@ -823,7 +886,6 @@
       requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
 
-      // Animate boxes floating
       boxMeshes.forEach((mesh, i) => {
         if (mesh.visible) {
           mesh.position.y = -0.6 + Math.sin(time * 1.5 + i) * 0.12;
@@ -831,14 +893,12 @@
         }
       });
 
-      // Animate sleek orb dice floating & ring spinning
       diceGroup.position.y = 2.5 + Math.sin(time * 2) * 0.15;
       diceGroup.rotation.y += 0.01;
       ringMesh.rotation.x += 0.015;
       ringMesh.rotation.y += 0.02;
-      coreMat.emissiveIntensity = 0.6 + Math.sin(time * 4) * 0.3; // Pulsing glow
+      coreMat.emissiveIntensity = 0.6 + Math.sin(time * 4) * 0.3;
 
-      // Animate explosion shards
       shards.forEach((s, idx) => {
         s.position.x += s.userData.vx;
         s.position.y += s.userData.vy;
