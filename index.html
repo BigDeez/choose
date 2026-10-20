@@ -245,7 +245,7 @@
 
     .overlay.show .result-card { transform: scale(1); }
     .result-title { font-size: 1.1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; }
-    .result-main { font-size: 2.2rem; font-weight: 900; color: #fff; margin: 0.8rem 0; line-height: 1.2; }
+    .result-main { font-size: 2rem; font-weight: 900; color: #fff; margin: 0.8rem 0; line-height: 1.2; }
 
     .result-sequence-list {
       margin-top: 1.2rem;
@@ -276,20 +276,19 @@
 
   <header>
     <h1>Decision Engine</h1>
-    <p class="sub-heading">Dynamic Branching Wheel System</p>
+    <p class="sub-heading">Custom Branching Wheel System</p>
   </header>
 
   <div class="stage-indicator">
     <div id="badge-category" class="badge active">1. CATEGORY</div>
     <div id="badge-target" class="badge">2. TARGET</div>
-    <div id="badge-method" class="badge">3. METHOD</div>
-    <div id="badge-position" class="badge">4. POSITION</div>
-    <div id="badge-wildcard" class="badge">5. WILDCARD</div>
+    <div id="badge-action" class="badge">3. ACTION</div>
+    <div id="badge-method" class="badge">4. METHOD</div>
   </div>
 
   <main class="main-container">
     <div class="wheel-card" id="wheel-card">
-      <h2 id="stage-title" style="color: var(--accent-2);">Stage 1: Target Category</h2>
+      <h2 id="stage-title" style="color: var(--accent-2);">Stage 1: Category</h2>
       <div class="wheel-wrapper">
         <div class="pointer" id="pointer"></div>
         <canvas id="wheelCanvas" width="600" height="600"></canvas>
@@ -317,7 +316,7 @@
       <div class="result-title" id="resTitle">Result Locked</div>
       <div class="result-main" id="resText">OPTION</div>
       <div class="result-sequence-list" id="resSequenceBox" style="display: none;">
-        <div style="font-size:0.8rem; color:var(--accent-3); text-transform:uppercase; margin-bottom:0.5rem; font-weight:bold;">Final Execution Plan</div>
+        <div style="font-size:0.8rem; color:var(--accent-3); text-transform:uppercase; margin-bottom:0.5rem; font-weight:bold;">Final Game Blueprint</div>
         <div id="resSequenceContent"></div>
       </div>
       <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center;">
@@ -368,57 +367,98 @@
 
     const masterData = {
       category: {
-        title: "Stage 1: Pick Category",
+        title: "Stage 1: Category",
         badgeId: "badge-category",
-        defaultOpts: ["Body Part", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
+        defaultOpts: ["Body Part (Her)", "Clothing", "Myself", "Celebrity / Fantasy", "Item / Prop"],
         opts: []
       },
-      sub_body: {
-        title: "Target: Body Part",
+      // BODY PARTS (HER)
+      sub_her_body: {
+        title: "Target: Her Body Part",
         badgeId: "badge-target",
-        defaultOpts: ["Face / Mouth", "Chest / Cleavage", "Tummy / Abs", "Back / Booty", "Inside / Creampie", "Her Choice"],
+        defaultOpts: ["Boobs", "Face", "Glasses", "Legs", "Booty", "Pussy", "Feet", "Mouth", "Hair", "Hands"],
         opts: []
       },
+      act_standard_body: {
+        title: "Action: What to do",
+        badgeId: "badge-action",
+        defaultOpts: ["Leave on", "Clean off", "Play with it", "Take pictures", "Taste it", "Share it"],
+        opts: []
+      },
+      act_glasses_mouth: {
+        title: "Action: What to do",
+        badgeId: "badge-action",
+        defaultOpts: ["Take pictures", "Taste it", "Swallow", "Share it"],
+        opts: []
+      },
+      act_her_hands: {
+        title: "Action: What to do",
+        badgeId: "badge-action",
+        defaultOpts: ["Taste it", "Share it", "Play with it", "Use as lube", "Rub in face", "Put in ass"],
+        opts: []
+      },
+
+      // CLOTHING
       sub_clothing: {
-        title: "Target: Clothing",
+        title: "Target: Clothing Item",
         badgeId: "badge-target",
-        defaultOpts: ["Bra / Lingerie", "Panties", "Stockings / Tights", "High Heels", "Glasses / Spec-lens"],
+        defaultOpts: ["Bra", "Knickers", "Skirt", "Shirt", "Hijab", "Dress", "Heels", "Jeans", "Gloves", "Stockings"],
         opts: []
       },
+      act_clothing: {
+        title: "Action: What to do",
+        badgeId: "badge-action",
+        defaultOpts: ["Leave it", "Clean it", "Taste it", "Share it", "Play with it", "Take pictures"],
+        opts: []
+      },
+
+      // MYSELF
       sub_myself: {
-        title: "Target: Myself / Self",
+        title: "Target: My Body Part",
         badgeId: "badge-target",
-        defaultOpts: ["My Own Chest", "My Own Hands", "My Own Tummy", "In a Towel / Tissue"],
+        defaultOpts: ["Stomach", "Balls", "Chest", "Hand", "Face", "Feet"],
         opts: []
       },
-      sub_celebrity: {
-        title: "Target: Fantasy Role",
-        badgeId: "badge-target",
-        defaultOpts: ["Photo / Screen", "Roleplay Character", "Dirty Whispered Fantasy", "Her Picked Persona"],
+      act_myself: {
+        title: "Action: What she does",
+        badgeId: "badge-action",
+        defaultOpts: ["Taste it", "Share it", "Play with it", "Use as lube", "Clean it up"],
         opts: []
       },
+
+      // CELEBRITY
+      sub_celeb: {
+        title: "Target: UK Female Celebrity",
+        badgeId: "badge-target",
+        defaultOpts: ["Holly Willoughby", "Maya Jama", "Kelly Brook", "Amanda Holden", "Michelle Keegan", "Rita Ora", "Florence Pugh", "Gemma Atkinson"],
+        opts: []
+      },
+      act_celeb: {
+        title: "Rule: Blindfold & Snap",
+        badgeId: "badge-action",
+        defaultOpts: ["Blindfold Him + Wank Over Celeb (Pics for Humiliation / Self-Play)"],
+        opts: []
+      },
+
+      // ITEM / PROP
       sub_item: {
-        title: "Target: Item / Prop",
+        title: "Target: Naughty Item / Prop",
         badgeId: "badge-target",
-        defaultOpts: ["Bedding / Sheets", "Waffle Blanket", "Toy Surface", "Mirror Surface", "Chair / Furniture"],
+        defaultOpts: ["Waffle Blanket", "Kitchen Counter", "Mirror", "Sofa Cushion", "Car Bonnet", "Chair", "Phone Screen"],
         opts: []
       },
+      act_item: {
+        title: "Action: What to do",
+        badgeId: "badge-action",
+        defaultOpts: ["Take pics", "Play with it", "Lick it off"],
+        opts: []
+      },
+
+      // METHOD
       method: {
-        title: "Stage 3: Method / Act",
+        title: "Stage 4: Method / Technique",
         badgeId: "badge-method",
-        defaultOpts: ["Blowjob / Oral", "Handwork Only", "PIV (Intercourse)", "Body Glide / Friction", "Toy-Assisted", "Paired (Hands + Mouth)", "Mutual Stimulation"],
-        opts: []
-      },
-      position: {
-        title: "Stage 4: Position",
-        badgeId: "badge-position",
-        defaultOpts: ["Missionary / Classic", "Doggy Style / Rear", "Cowgirl (She Rides)", "Reverse Cowgirl", "Spoon / Side-by-Side", "Edge of Bed / Chair", "Standing Up"],
-        opts: []
-      },
-      wildcard: {
-        title: "Stage 5: Wildcard Spice",
-        badgeId: "badge-wildcard",
-        defaultOpts: ["Blindfolded & Sensory", "Fast & Heavy Pace", "Ultra Slow & Teasing", "Dirty Talk / Whispers", "Edged 3 Times First", "No Hands Allowed", "Pure Free-for-All"],
+        defaultOpts: ["Blowjob / Oral", "Handwork Only", "PIV (Intercourse)", "Body Glide / Friction", "Toy-Assisted", "Paired (Hands + Mouth)", "Slow Grind vs Speed Run"],
         opts: []
       }
     };
@@ -427,7 +467,7 @@
       masterData[k].opts = [...masterData[k].defaultOpts];
     });
 
-    let activeSequenceKeys = ["category", "sub_body", "method", "position", "wildcard"];
+    let activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
     let currentStepIndex = 0;
     let selections = {};
 
@@ -482,7 +522,7 @@
         ctx.rotate(start + sliceAngle / 2);
         ctx.textAlign = 'right';
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 18px Outfit';
+        ctx.font = 'bold 16px Outfit';
         ctx.shadowColor = 'rgba(0,0,0,0.6)';
         ctx.shadowBlur = 6;
         ctx.fillText(opt, radius - 35, 6);
@@ -514,8 +554,7 @@
       const extraRounds = 5 + Math.floor(Math.random() * 4);
       const randomSliceIndex = Math.floor(Math.random() * numSlices);
       
-      // Pointer sits at the right side (3 o'clock, which is 0 radians in canvas coordinates)
-      const pointerAngle = 0;
+      const pointerAngle = 0; // 3 o'clock
       const targetSliceMid = randomSliceIndex * sliceAngle + sliceAngle / 2;
       const totalRotation = (extraRounds * 2 * Math.PI) + (pointerAngle - targetSliceMid) - (currentAngle % (2 * Math.PI));
 
@@ -562,12 +601,30 @@
       const key = getCurrentKey();
       selections[key] = resultText;
 
+      // DYNAMIC BRANCHING LOGIC
       if (key === 'category') {
-        if (resultText.includes("Clothing")) activeSequenceKeys[1] = "sub_clothing";
-        else if (resultText.includes("Myself")) activeSequenceKeys[1] = "sub_myself";
-        else if (resultText.includes("Celebrity") || resultText.includes("Fantasy")) activeSequenceKeys[1] = "sub_celebrity";
-        else if (resultText.includes("Item") || resultText.includes("Prop")) activeSequenceKeys[1] = "sub_item";
-        else activeSequenceKeys[1] = "sub_body";
+        if (resultText.includes("Body Part")) {
+          activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
+        } else if (resultText.includes("Clothing")) {
+          activeSequenceKeys = ["category", "sub_clothing", "act_clothing", "method"];
+        } else if (resultText.includes("Myself")) {
+          activeSequenceKeys = ["category", "sub_myself", "act_myself", "method"];
+        } else if (resultText.includes("Celebrity")) {
+          activeSequenceKeys = ["category", "sub_celeb", "act_celeb", "method"];
+        } else if (resultText.includes("Item")) {
+          activeSequenceKeys = ["category", "sub_item", "act_item", "method"];
+        }
+      } else if (key === 'sub_her_body') {
+        if (resultText === "Hair") {
+          // Skip action wheel directly to method
+          activeSequenceKeys = ["category", "sub_her_body", "method"];
+        } else if (resultText === "Glasses" || resultText === "Mouth") {
+          activeSequenceKeys = ["category", "sub_her_body", "act_glasses_mouth", "method"];
+        } else if (resultText === "Hands") {
+          activeSequenceKeys = ["category", "sub_her_body", "act_her_hands", "method"];
+        } else {
+          activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
+        }
       }
 
       const overlay = document.getElementById('resultOverlay');
@@ -584,14 +641,15 @@
         nextBtn.innerText = "Next Wheel →";
       } else {
         const seqContent = document.getElementById('resSequenceContent');
-        const targetSubKey = activeSequenceKeys[1];
-        seqContent.innerHTML = `
-          <div class="result-seq-item">1. Category: <span>${selections['category']}</span></div>
-          <div class="result-seq-item">2. Target: <span>${selections[targetSubKey]}</span></div>
-          <div class="result-seq-item">3. Method: <span>${selections['method']}</span></div>
-          <div class="result-seq-item">4. Position: <span>${selections['position']}</span></div>
-          <div class="result-seq-item">5. Wildcard: <span>${selections['wildcard']}</span></div>
-        `;
+        let html = `<div class="result-seq-item">1. Category: <span>${selections['category']}</span></div>`;
+        
+        activeSequenceKeys.forEach((k, idx) => {
+          if (idx > 0) {
+            html += `<div class="result-seq-item">${idx + 1}. ${masterData[k].title}: <span>${selections[k]}</span></div>`;
+          }
+        });
+
+        seqContent.innerHTML = html;
         seqBox.style.display = 'block';
         nextBtn.innerText = "Start New Run ↺";
       }
@@ -643,7 +701,7 @@
       document.getElementById('stage-title').innerText = data.title;
       document.getElementById('editor-title').innerText = `Edit ${data.title}`;
 
-      const badgeIds = ["badge-category", "badge-target", "badge-method", "badge-position", "badge-wildcard"];
+      const badgeIds = ["badge-category", "badge-target", "badge-action", "badge-method"];
       badgeIds.forEach((bId, idx) => {
         const badge = document.getElementById(bId);
         if (idx < currentStepIndex) badge.className = "badge completed";
@@ -700,7 +758,7 @@
         currentStepIndex++;
       } else {
         currentStepIndex = 0;
-        activeSequenceKeys = ["category", "sub_body", "method", "position", "wildcard"];
+        activeSequenceKeys = ["category", "sub_her_body", "act_standard_body", "method"];
         selections = {};
       }
       updateUI();
