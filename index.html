@@ -4,18 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nocturne — The 3D Intimate Vault</title>
+  
+  <!-- Fonts Setup -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Playfair+Display:ital,wght@1,600;1,800&display=swap" rel="stylesheet">
+  
+  <!-- Three.js 3D Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- ===================================================================
+       1. STYLESHEET (CSS)
+       Customize UI colors, fonts, buttons, and animations here.
+  ==================================================================== -->
   <style>
+    /* Color Palette & Custom Theme Variables */
     :root {
-      --bg: #07040a;
-      --panel: #120818;
-      --panel-border: #2c1438;
-      --text: #f8f0fa;
-      --accent-gold: #f3c653;
-      --accent-rose: #ff2a6d;
+      --bg: #07040a;               /* Deep dark background */
+      --panel: #120818;            /* Glassmorphism panel fill */
+      --panel-border: #2c1438;     /* Border glow color */
+      --text: #f8f0fa;             /* Primary text color */
+      --accent-gold: #f3c653;       /* Gold highlight color */
+      --accent-rose: #ff2a6d;       /* Rose/Pink neon color */
       --font-main: 'Outfit', sans-serif;
       --font-serif: 'Playfair Display', serif;
     }
@@ -57,10 +67,11 @@
       font-weight: 600;
     }
 
+    /* 3D WebGL Canvas Containers */
     #webgl-container { position: fixed; inset: 0; z-index: 1; }
     #fx-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 95; }
 
-    /* Start Screen */
+    /* Welcome / Splash Screen */
     .start-screen {
       position: fixed;
       inset: 0;
@@ -91,7 +102,7 @@
       line-height: 1.5;
     }
 
-    /* HUD Layer */
+    /* Heads Up Display (HUD) Controls */
     .hud-layer {
       position: relative;
       z-index: 10;
@@ -129,6 +140,7 @@
       margin-bottom: 0.8rem;
     }
 
+    /* Buttons Styling */
     .btn {
       background: linear-gradient(135deg, var(--accent-gold), #b38b25);
       color: #07040a;
@@ -156,11 +168,9 @@
       color: #fff;
       box-shadow: 0 10px 25px rgba(255, 42, 109, 0.3);
     }
-    .btn-rose:hover {
-      box-shadow: 0 15px 30px rgba(255, 42, 109, 0.5);
-    }
+    .btn-rose:hover { box-shadow: 0 15px 30px rgba(255, 42, 109, 0.5); }
 
-    /* Box Grids */
+    /* Box Selection Grids */
     .box-choice-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -198,7 +208,7 @@
       border-color: #190f1d;
     }
 
-    /* Modals */
+    /* Modal Windows & Reveals */
     .overlay {
       position: fixed;
       inset: 0;
@@ -303,10 +313,17 @@
 </head>
 <body>
 
+  <!-- Particle Visual FX Canvas -->
   <canvas id="fx-canvas"></canvas>
+  
+  <!-- 3D Scene Viewport -->
   <div id="webgl-container"></div>
 
-  <!-- Start Screen -->
+  <!-- ===================================================================
+       2. USER INTERFACE LAYOUT (HTML)
+  ==================================================================== -->
+  
+  <!-- Start Screen Modal -->
   <div class="start-screen" id="startScreen">
     <h2>The Vault</h2>
     <p>5 Dice Rolls. 5 Mystery Boxes. Choose your unboxing order.</p>
@@ -318,39 +335,52 @@
     <p class="sub-heading">Interactive 3D Vault Engine</p>
   </header>
 
+  <!-- Control HUD Panel -->
   <div class="hud-layer">
     <div class="control-panel" id="controlPanel">
       <div class="instruction-text" id="instructionText">Roll 1 of 5</div>
       
+      <!-- Action 1: Roll Dice -->
       <div id="rollActionArea">
-        <button class="btn" id="rollDiceBtn">Roll Nexus Orb ✨</button>
+        <button class="btn" id="rollDiceBtn">Roll Nexus D20 ✨</button>
       </div>
 
+      <!-- Action 2: Choose Mystery Box -->
       <div id="placeActionArea" style="display: none; width: 100%;">
-        <div style="font-size: 0.9rem; color: #9a849f; margin-bottom: 0.4rem;">Rolled Value: <span id="currentRollVal" style="color:var(--accent-gold); font-size:1.5rem; font-weight:800;">?</span></div>
-        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color:#fff;">She chooses which mystery box receives this roll:</div>
+        <div style="font-size: 0.9rem; color: #9a849f; margin-bottom: 0.4rem;">
+          Rolled Value: <span id="currentRollVal" style="color:var(--accent-gold); font-size:1.5rem; font-weight:800;">?</span>
+        </div>
+        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color:#fff;">
+          She chooses which mystery box receives this roll:
+        </div>
         <div class="box-choice-grid" id="boxChoiceGrid"></div>
       </div>
 
+      <!-- Action 3: Unseal Vault -->
       <div id="unsealActionArea" style="display: none;">
         <button class="btn" id="unsealVaultBtn">UNSEAL THE VAULT 🔓</button>
       </div>
 
+      <!-- Action 4: Unbox Explode Order -->
       <div id="interactiveUnboxArea" style="display: none; width: 100%;">
-        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color:var(--accent-gold);">She picks which box to explode next:</div>
+        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color:var(--accent-gold);">
+          She picks which box to explode next:
+        </div>
         <div class="box-choice-grid" id="unboxChoiceGrid"></div>
       </div>
     </div>
   </div>
 
-  <!-- Unboxing Ceremony Modal -->
+  <!-- Reveal & Final Plan Overlay -->
   <div class="overlay" id="revealOverlay">
     <div class="modal-card" id="modalCard">
       <div class="modal-title" id="modalTitle">Unboxing Box...</div>
+      
       <div id="modalContentContainer">
         <div class="modal-main-text" id="modalMainText">...</div>
       </div>
 
+      <!-- End-Game Celebrity Generator Slot Machine -->
       <div id="celebGeneratorBox" style="display: none;">
         <div class="celeb-card">
           <div class="celeb-folder" id="slotCategory">📂 SELECTING CATEGORY...</div>
@@ -359,6 +389,7 @@
         <button class="btn btn-rose" id="spinCelebBtn" style="width: 100%; margin-top: 1rem;">Spin Celeb Generator 🎰</button>
       </div>
 
+      <!-- Summary Execution Plan -->
       <div class="blueprint-box" id="blueprintBox" style="display: none;">
         <div style="font-size: 0.8rem; color: var(--accent-gold); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 0.6rem;">Master Execution Plan</div>
         <div id="blueprintRows"></div>
@@ -368,7 +399,14 @@
     </div>
   </div>
 
+  <!-- ===================================================================
+       3. GAME ENGINE & 3D GRAPHICS (JAVASCRIPT)
+  ==================================================================== -->
   <script>
+    /* ==================================================================
+       SECTION 3A: CELEBRITY & GAME DATABASE POOLS
+       Edit or add names/categories here easily!
+    =================================================================== */
     const celebrityDatabase = {
       "TV Presenters & Personalities": [
         "Alex Jones", "Alex Scott", "Amanda Holden", "Andrea McLean", "Angelica Bell", 
@@ -436,6 +474,9 @@
       ]
     };
 
+    /* ==================================================================
+       SECTION 3B: AUDIO SOUND SYNTHESIZER
+    =================================================================== */
     class SoundFX {
       constructor() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -445,14 +486,14 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.06);
-        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+        osc.frequency.setValueAtTime(260, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(this.ctx.currentTime + 0.06);
+        osc.stop(this.ctx.currentTime + 0.05);
       }
       playExplode() {
         if (this.ctx.state === 'suspended') this.ctx.resume();
@@ -470,10 +511,11 @@
         });
       }
     }
-
     const sfx = new SoundFX();
 
-    // THREE.SCENE SETUP
+    /* ==================================================================
+       SECTION 3C: THREE.JS 3D SCENE & LIGHTING
+    =================================================================== */
     const container = document.getElementById('webgl-container');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x07040a, 0.03);
@@ -490,14 +532,15 @@
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0xf3c653, 2, 25);
+    const pointLight1 = new THREE.PointLight(0xf3c653, 2.5, 25);
     pointLight1.position.set(0, 6, 3);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0xff2a6d, 2, 30);
+    const pointLight2 = new THREE.PointLight(0xff2a6d, 2.5, 30);
     pointLight2.position.set(-6, -2, -2);
     scene.add(pointLight2);
 
+    /* Build 3D Mystery Boxes */
     const boxConfigs = [
       { name: "Velvet", color: 0xff2a6d },
       { name: "Gold", color: 0xf3c653 },
@@ -526,48 +569,92 @@
       boxMeshes.push(mesh);
     });
 
-    // BUILD SLEEK ORB "NEXUS DICE"
+    /* ==================================================================
+       SECTION 3D: ADVANCED "NEXUS D20" ORB DICE WITH GLOWING NUMBERS
+    =================================================================== */
     const diceGroup = new THREE.Group();
     diceGroup.position.set(0, 2.5, 2);
 
-    const coreGeo = new THREE.SphereGeometry(0.7, 32, 32);
-    const coreMat = new THREE.MeshStandardMaterial({
-      color: 0xf3c653,
-      emissive: 0xf3c653,
-      emissiveIntensity: 0.8,
-      roughness: 0.1,
-      metalness: 0.9
-    });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    diceGroup.add(coreMesh);
+    // Dynamic Canvas Texture Generator for Floating Glowing Numbers (1 to 6)
+    function createGlowNumberTexture(numberText) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512; 
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
 
-    const shellGeo = new THREE.SphereGeometry(0.95, 32, 32);
+      // Dark Crystal Canvas Background
+      ctx.fillStyle = '#0f0518';
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Gold Geometric Border
+      ctx.lineWidth = 16;
+      ctx.strokeStyle = '#f3c653';
+      ctx.strokeRect(20, 20, 472, 472);
+
+      // Inner Glowing Number
+      ctx.shadowColor = '#ff2a6d';
+      ctx.shadowBlur = 30;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 280px Outfit, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(numberText.toString(), 256, 260);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.needsUpdate = true;
+      return texture;
+    }
+
+    // Dynamic Material Map for Dice Faces
+    let diceNumberMaterials = {};
+    for (let i = 1; i <= 6; i++) {
+      diceNumberMaterials[i] = new THREE.MeshStandardMaterial({
+        map: createGlowNumberTexture(i),
+        emissive: 0xf3c653,
+        emissiveIntensity: 0.4,
+        roughness: 0.1,
+        metalness: 0.8
+      });
+    }
+
+    // Core Geometric D20 Shape (Icosahedron core)
+    const d20Geo = new THREE.IcosahedronGeometry(0.85, 0);
+    const d20Mesh = new THREE.Mesh(d20Geo, diceNumberMaterials[1]);
+    diceGroup.add(d20Mesh);
+
+    // Translucent Glowing Outer Orb Shell
+    const shellGeo = new THREE.SphereGeometry(1.15, 32, 32);
     const shellMat = new THREE.MeshPhysicalMaterial({
-      color: 0x1a0b2e,
-      roughness: 0.1,
-      metalness: 0.2,
-      transmission: 0.6,
-      opacity: 0.85,
+      color: 0xff2a6d,
+      emissive: 0x2c1438,
+      roughness: 0.05,
+      metalness: 0.1,
+      transmission: 0.85,
+      opacity: 0.9,
       transparent: true,
-      reflectivity: 0.9,
-      clearcoat: 1.0
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1
     });
     const shellMesh = new THREE.Mesh(shellGeo, shellMat);
     diceGroup.add(shellMesh);
 
-    const ringGeo = new THREE.TorusGeometry(1.2, 0.04, 16, 100);
-    const ringMat = new THREE.MeshStandardMaterial({
-      color: 0xff2a6d,
-      emissive: 0xff2a6d,
-      emissiveIntensity: 1.2,
-      roughness: 0.2
-    });
-    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-    ringMesh.rotation.x = Math.PI / 3;
-    diceGroup.add(ringMesh);
+    // Orbiting Plasma Energy Ring 1
+    const ringGeo1 = new THREE.TorusGeometry(1.4, 0.03, 16, 100);
+    const ringMat1 = new THREE.MeshStandardMaterial({ color: 0xf3c653, emissive: 0xf3c653, emissiveIntensity: 1.5 });
+    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
+    ring1.rotation.x = Math.PI / 3;
+    diceGroup.add(ring1);
+
+    // Orbiting Plasma Energy Ring 2
+    const ringGeo2 = new THREE.TorusGeometry(1.5, 0.02, 16, 100);
+    const ringMat2 = new THREE.MeshStandardMaterial({ color: 0xff2a6d, emissive: 0xff2a6d, emissiveIntensity: 1.5 });
+    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+    ring2.rotation.y = Math.PI / 4;
+    diceGroup.add(ring2);
 
     scene.add(diceGroup);
 
+    /* Particle Explosion Engine */
     let shards = [];
     function explodeBoxMesh(mesh) {
       mesh.visible = false;
@@ -591,6 +678,9 @@
       }
     }
 
+    /* ==================================================================
+       SECTION 3E: GAME STATE & CONTROLLER LOGIC
+    =================================================================== */
     let currentRollValue = null;
     let placedCount = 0;
     let openedCount = 0;
@@ -613,9 +703,10 @@
       instructionText.innerText = "Roll 1 of 5";
     });
 
+    // Roll Orb Logic & Animation Ticker
     document.getElementById('rollDiceBtn').addEventListener('click', () => {
       document.getElementById('rollDiceBtn').disabled = true;
-      instructionText.innerText = "Energizing Nexus Orb...";
+      instructionText.innerText = "Energizing Nexus D20...";
 
       let counter = 0;
       const rollInterval = setInterval(() => {
@@ -623,23 +714,27 @@
         currentRollValue = Math.floor(Math.random() * 6) + 1;
         currentRollValEl.innerText = currentRollValue;
 
-        diceGroup.rotation.x += 0.5;
-        diceGroup.rotation.y += 0.7;
-        ringMesh.rotation.z += 0.4;
-        diceGroup.position.y = 2.5 + Math.sin(counter) * 0.4;
+        // Dynamically update the 3D texture on the core d20 shape as it rolls
+        d20Mesh.material = diceNumberMaterials[currentRollValue];
+
+        diceGroup.rotation.x += 0.6;
+        diceGroup.rotation.y += 0.8;
+        ring1.rotation.z += 0.4;
+        ring2.rotation.x += 0.5;
+        diceGroup.position.y = 2.5 + Math.sin(counter) * 0.45;
 
         counter++;
 
-        if (counter > 14) {
+        if (counter > 15) {
           clearInterval(rollInterval);
           diceGroup.position.y = 2.5;
 
-          instructionText.innerText = `Rolled: ${currentRollValue}. Choose the box:`;
+          instructionText.innerText = `Rolled ${currentRollValue}! Choose destination box:`;
           rollActionArea.style.display = 'none';
           placeActionArea.style.display = 'block';
           renderBoxChoiceButtons();
         }
-      }, 65);
+      }, 60);
     });
 
     function renderBoxChoiceButtons() {
@@ -793,7 +888,7 @@
       document.getElementById('revealOverlay').classList.add('show');
     }
 
-    // ANIMATED CELEBRITY SLOT GENERATOR
+    // End-Game Celebrity Generator Animation Ticker
     document.getElementById('spinCelebBtn').addEventListener('click', () => {
       const btn = document.getElementById('spinCelebBtn');
       btn.disabled = true;
@@ -801,7 +896,6 @@
       const slotCat = document.getElementById('slotCategory');
       const slotName = document.getElementById('slotName');
 
-      let speed = 50;
       let counter = 0;
       const maxTicks = 25;
 
@@ -821,7 +915,6 @@
           triggerParticles();
           triggerShake();
 
-          // Update Blueprint display text live
           const bpCelebRow = document.getElementById('bpRowVal1');
           if (bpCelebRow) {
             bpCelebRow.innerText = `${finalCelebPick.category} ➔ ${finalCelebPick.name}`;
@@ -829,7 +922,7 @@
 
           btn.innerText = "Target Selected 🔥";
         }
-      }, speed);
+      }, 50);
     });
 
     document.getElementById('modalNextBtn').addEventListener('click', () => {
@@ -848,6 +941,7 @@
       setTimeout(() => card.classList.remove('shake'), 400);
     }
 
+    /* 2D Canvas Particle Effects Engine */
     const fxCanvas = document.getElementById('fx-canvas');
     const fxCtx = fxCanvas.getContext('2d');
     let particles = [];
@@ -881,11 +975,15 @@
       if (particles.length > 0) requestAnimationFrame(updateParticles);
     }
 
+    /* ==================================================================
+       SECTION 3F: REAL-TIME 60FPS THREE.JS RENDER LOOP
+    =================================================================== */
     let clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
 
+      // Floating animation for 3D boxes
       boxMeshes.forEach((mesh, i) => {
         if (mesh.visible) {
           mesh.position.y = -0.6 + Math.sin(time * 1.5 + i) * 0.12;
@@ -893,12 +991,21 @@
         }
       });
 
-      diceGroup.position.y = 2.5 + Math.sin(time * 2) * 0.15;
-      diceGroup.rotation.y += 0.01;
-      ringMesh.rotation.x += 0.015;
-      ringMesh.rotation.y += 0.02;
-      coreMat.emissiveIntensity = 0.6 + Math.sin(time * 4) * 0.3;
+      // Complex floating & multi-axis rotation for Nexus D20 Orb
+      diceGroup.position.y = 2.5 + Math.sin(time * 2) * 0.18;
+      diceGroup.rotation.y += 0.012;
+      d20Mesh.rotation.x += 0.01;
+      d20Mesh.rotation.z += 0.008;
 
+      ring1.rotation.x += 0.02;
+      ring1.rotation.y += 0.015;
+      ring2.rotation.y -= 0.025;
+      ring2.rotation.z += 0.01;
+
+      // Pulse shell brightness
+      shellMat.emissiveIntensity = 0.3 + Math.sin(time * 3) * 0.2;
+
+      // Exploding shard physics animation
       shards.forEach((s, idx) => {
         s.position.x += s.userData.vx;
         s.position.y += s.userData.vy;
